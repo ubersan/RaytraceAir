@@ -10,11 +10,13 @@ namespace RaytraceAir
     {
         private readonly Camera _camera;
         private readonly List<Sphere> _spheres;
+        private readonly List<Vec3> _lights;
 
-        public Scene(Camera camera, List<Sphere> spheres)
+        public Scene(Camera camera, List<Sphere> spheres, List<Vec3> lights)
         {
             _camera = camera;
             _spheres = spheres;
+            _lights = lights;
         }
 
         public void Trace()
@@ -33,21 +35,33 @@ namespace RaytraceAir
                     var dir = new Vec3(x, y, -1).Normalized();
 
                     Sphere hitSphere = null;
+                    Vec3 hitPoint = null;
                     foreach (var sphere in _spheres)
                     {
-                        if (sphere.Intersects(origin, dir))
+                        if (sphere.Intersects(origin, dir,  out var t))
                         {
                             hitSphere = sphere;
+                            hitPoint = origin + t * dir;
                         }
                     }
 
                     if (hitSphere != null)
                     {
-                        _camera.Pixels[i, j] = Vec3.Ones();
+                        var lightDir = (_lights[0] - hitPoint).Normalized();
+                        var start = hitPoint + hitSphere.Normal(hitPoint) * 1e-6;
+                        if (hitSphere.Intersects(start, lightDir, out var _))
+                        {
+                            _camera.Pixels[i, j] = Vec3.Zeros();
+                        }
+                        else
+                        {
+
+                            _camera.Pixels[i, j] = Vec3.Ones() * (lightDir.Dot(hitSphere.Normal(hitPoint)));
+                        }
                     }
                     else
                     {
-                        _camera.Pixels[i, j] = new Vec3(200, 50, 90);
+                        _camera.Pixels[i, j] = new Vec3(0.8, 0.2, 0.3);
                     }
                 }
             }
@@ -65,9 +79,6 @@ namespace RaytraceAir
                 var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
                     ImageLockMode.ReadWrite,
                     bmp.PixelFormat);
-
-                var bytes = Math.Abs(data.Stride) * bmp.Height;
-                var values = new byte[bytes];
 
                 for (var j = 0; j < bmp.Height; ++j)
                 {

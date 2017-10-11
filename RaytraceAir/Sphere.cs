@@ -14,10 +14,10 @@ namespace RaytraceAir
             _radius = radius;
         }
 
-        public bool Intersects(Vec3 origin, Vec3 direction)
+        public bool Intersects(Vec3 origin, Vec3 direction, out double t)
         {
             double t0, t1;
-
+            t = 0;
             var L = origin - _center;
             var a = direction.Dot(direction);
             var b = 2 * direction.Dot(L);
@@ -30,9 +30,9 @@ namespace RaytraceAir
 
             if (t0 > t1)
             {
-                var t = t1;
+                var temp = t1;
                 t1 = t0;
-                t0 = t;
+                t0 = temp;
             }
 
             if (t0 < 0)
@@ -43,6 +43,8 @@ namespace RaytraceAir
                     return false;
                 }
             }
+
+            t = t0;
 
             return true;
         }
@@ -78,6 +80,11 @@ namespace RaytraceAir
             }
 
             return true;
+        }
+
+        public Vec3 Normal(Vec3 p)
+        {
+            return (p - _center).Normalized();
         }
     }
 }

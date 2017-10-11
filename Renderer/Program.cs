@@ -12,6 +12,10 @@ namespace Renderer
             var scene = new Scene(camera, new List<Sphere>
             {
                 new Sphere(new Vec3(0, 0, -10), 1)
+            },
+            new List<Vec3>
+            {
+                new Vec3(0, 0, -8)
             });
             scene.Trace();
             scene.Render();
