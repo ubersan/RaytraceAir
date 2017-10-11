@@ -23,6 +23,7 @@ namespace RaytraceAir
         {
             var scale = Math.Tan(deg2rad(_camera.HorizontalFoV * 0.5));
             var aspectRatio = _camera.WidthInPixel / (double) _camera.HeightInPixel;
+            var angle = Math.Acos(new Vec3(0, 0, -1).Dot(_camera.ViewDirection)/(new Vec3(0, 0, -1).Norm*_camera.ViewDirection.Norm))*180/Math.PI;
             for (var j = 0; j < _camera.HeightInPixel; ++j)
             {
                 for (var i = 0; i < _camera.WidthInPixel; ++i)
@@ -34,14 +35,21 @@ namespace RaytraceAir
 
                     var dir = new Vec3(x, y, -1).Normalized();
 
+                    var a = deg2rad(angle);
+                    var newDir = new Vec3(
+                        Math.Cos(a)*dir.X - Math.Sin(a)*dir.Z,
+                        dir.Y,
+                        -Math.Sin(a)*dir.X + Math.Cos(a)*dir.Z)
+                    .Normalized();
+
                     Sphere hitSphere = null;
                     Vec3 hitPoint = null;
                     foreach (var sphere in _spheres)
                     {
-                        if (sphere.Intersects(origin, dir,  out var t))
+                        if (sphere.Intersects(origin, newDir,  out var t))
                         {
                             hitSphere = sphere;
-                            hitPoint = origin + t * dir;
+                            hitPoint = origin + t * newDir;
                         }
                     }
 
@@ -63,7 +71,7 @@ namespace RaytraceAir
                         
                         if (shadowSphere == null)
                         {
-                            _camera.Pixels[i, j] = Vec3.Ones() * (lightDir.Dot(hitSphere.Normal(hitPoint)));
+                            _camera.Pixels[i, j] = Vec3.Ones() * lightDir.Dot(hitSphere.Normal(hitPoint));
                         }
                     }
                     else
@@ -92,7 +100,7 @@ namespace RaytraceAir
                     for (var i = 0; i < bmp.Width; ++i)
                     {
                         var px = _camera.Pixels[i, j];
-                        var col = new byte[] { (byte)(255*px.X), (byte)(255*px.Y), (byte)(255*px.Z) };
+                        var col = new[] { (byte)(255*px.X), (byte)(255*px.Y), (byte)(255*px.Z) };
                         Marshal.Copy(col, 0, data.Scan0 + (j * bmp.Width + i) * 3, 3);
                     }
                 }
