@@ -49,13 +49,20 @@ namespace RaytraceAir
                     {
                         var lightDir = (_lights[0] - hitPoint).Normalized();
                         var start = hitPoint + hitSphere.Normal(hitPoint) * 1e-6;
-                        if (hitSphere.Intersects(start, lightDir, out var _))
-                        {
-                            _camera.Pixels[i, j] = Vec3.Zeros();
-                        }
-                        else
-                        {
 
+                        Sphere shadowSphere = null;
+                        foreach (var sphere in _spheres)
+                        {
+                            if (sphere.Intersects(start, lightDir, out var _))
+                            {
+                                shadowSphere = sphere;
+                                _camera.Pixels[i, j] = Vec3.Zeros();
+                                break;
+                            }
+                        }
+                        
+                        if (shadowSphere == null)
+                        {
                             _camera.Pixels[i, j] = Vec3.Ones() * (lightDir.Dot(hitSphere.Normal(hitPoint)));
                         }
                     }
