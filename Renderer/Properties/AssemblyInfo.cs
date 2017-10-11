@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RaytraceAir")]
+[assembly: AssemblyTitle("Renderer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Zuehlke Engineering")]
-[assembly: AssemblyProduct("RaytraceAir")]
+[assembly: AssemblyProduct("Renderer")]
 [assembly: AssemblyCopyright("Copyright © Zuehlke Engineering 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("217b1ba2-e77f-42cf-bf07-aa4430e50ae7")]
+[assembly: Guid("662b09c5-d815-4f65-b862-ab0ec89a807e")]
 
 // Version information for an assembly consists of the following four values:
 //
