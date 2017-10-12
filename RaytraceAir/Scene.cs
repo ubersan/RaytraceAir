@@ -22,37 +22,24 @@ namespace RaytraceAir
 
         public void Render()
         {
-            var scale = Math.Tan(deg2rad(_camera.HorizontalFoV * 0.5));
-            var aspectRatio = _camera.WidthInPixel / (double) _camera.HeightInPixel;
-            for (var j = 0; j < _camera.HeightInPixel; ++j)
+            foreach (var pixel in GetPixel())
             {
-                for (var i = 0; i < _camera.WidthInPixel; ++i)
+                var originPrimaryRay = _camera.Position;
+                var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();
+
+                if (Trace(originPrimaryRay, dir, out var hitSphere, out var hitPoint))
                 {
-                    var origin = _camera.Position;
+                    var originShadowRay = hitPoint + hitSphere.Normal(hitPoint) * 1e-6;
+                    var lightDir = (_lights[0] - hitPoint).Normalized();
 
-                    var x = (2 * (i + 0.5) / _camera.WidthInPixel - 1) * scale;
-                    var y = (1 - 2 * (j + 0.5) / _camera.HeightInPixel) * scale * 1 / aspectRatio;
-
-                    var dir = (_camera.ViewDirection + x*_camera.RightDirection + y*_camera.UpDirection).Normalized();
-
-                    if (Trace(origin, dir, out var hitSphere, out var hitPoint))
+                    if (!TraceShadow(originShadowRay, lightDir))
                     {
-                        var lightDir = (_lights[0] - hitPoint).Normalized();
-                        var start = hitPoint + hitSphere.Normal(hitPoint) * 1e-6;
-
-                        if (TraceShadow(start, lightDir))
-                        {
-                            _camera.Pixels[i, j] = Vec3.Zeros();
-                        }
-                        else
-                        {
-                            _camera.Pixels[i, j] = Vec3.Ones() * lightDir.Dot(hitSphere.Normal(hitPoint));
-                        }
+                        _camera.Pixels[pixel.I, pixel.J] = Vec3.Ones() * lightDir.Dot(hitSphere.Normal(hitPoint));
                     }
-                    else
-                    {
-                        _camera.Pixels[i, j] = new Vec3(0.8, 0.2, 0.3);
-                    }
+                }
+                else
+                {
+                    _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
                 }
             }
         }
@@ -81,7 +68,7 @@ namespace RaytraceAir
             return hitSphere != null;
         }
 
-        private bool TraceShadow(Vec3 origin,  Vec3 dir)
+        private bool TraceShadow(Vec3 origin, Vec3 dir)
         {
             Sphere shadowSphere = null;
             foreach (var sphere in _spheres)
@@ -109,7 +96,7 @@ namespace RaytraceAir
                     for (var i = 0; i < bmp.Width; ++i)
                     {
                         var px = _camera.Pixels[i, j];
-                        var col = new[] { (byte)(255*px.X), (byte)(255*px.Y), (byte)(255*px.Z) };
+                        var col = new[] {(byte) (255 * px.X), (byte) (255 * px.Y), (byte) (255 * px.Z)};
                         Marshal.Copy(col, 0, data.Scan0 + (j * bmp.Width + i) * 3, 3);
                     }
                 }
@@ -118,5 +105,29 @@ namespace RaytraceAir
                 bmp.Save("bmp.bmp");
             }
         }
+
+        private IEnumerable<Pixel> GetPixel()
+        {
+            var scale = Math.Tan(deg2rad(_camera.HorizontalFoV * 0.5));
+            var aspectRatio = _camera.WidthInPixel / (double) _camera.HeightInPixel;
+            for (var j = 0; j < _camera.HeightInPixel; ++j)
+            {
+                for (var i = 0; i < _camera.WidthInPixel; ++i)
+                {
+                    var x = (2 * (i + 0.5) / _camera.WidthInPixel - 1) * scale;
+                    var y = (1 - 2 * (j + 0.5) / _camera.HeightInPixel) * scale * 1 / aspectRatio;
+
+                    yield return new Pixel {X = x, Y = y, I = i, J = j};
+                }
+            }
+        }
+    }
+
+    public struct Pixel
+    {
+        public double X;
+        public double Y;
+        public int I;
+        public int J;
     }
 }

@@ -12,6 +12,14 @@
             WidthInPixel = widthInPixel;
             HeightInPixel = heightInPixel;
             Pixels = new Vec3[WidthInPixel, HeightInPixel];
+
+            for (var i = 0; i < WidthInPixel; ++i)
+            {
+                for (var j = 0; j < HeightInPixel; ++j)
+                {
+                    Pixels[i, j] = Vec3.Zeros();
+                }
+            }
         }
 
         public Vec3 Position { get; }
