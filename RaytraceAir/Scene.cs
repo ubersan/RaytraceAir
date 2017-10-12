@@ -23,7 +23,6 @@ namespace RaytraceAir
         {
             var scale = Math.Tan(deg2rad(_camera.HorizontalFoV * 0.5));
             var aspectRatio = _camera.WidthInPixel / (double) _camera.HeightInPixel;
-            var angle = Math.Acos(new Vec3(0, 0, -1).Dot(_camera.ViewDirection)/(new Vec3(0, 0, -1).Norm*_camera.ViewDirection.Norm))*180/Math.PI;
             for (var j = 0; j < _camera.HeightInPixel; ++j)
             {
                 for (var i = 0; i < _camera.WidthInPixel; ++i)
@@ -33,23 +32,18 @@ namespace RaytraceAir
                     var x = (2 * (i + 0.5) / _camera.WidthInPixel - 1) * scale;
                     var y = (1 - 2 * (j + 0.5) / _camera.HeightInPixel) * scale * 1 / aspectRatio;
 
-                    var dir = new Vec3(x, y, -1).Normalized();
-
-                    var a = deg2rad(angle);
-                    var newDir = new Vec3(
-                        Math.Cos(a)*dir.X - Math.Sin(a)*dir.Z,
-                        dir.Y,
-                        -Math.Sin(a)*dir.X + Math.Cos(a)*dir.Z)
-                    .Normalized();
+                    var dir = (_camera.ViewDirection + x*_camera.RightDirection + y*_camera.UpDirection).Normalized();
 
                     Sphere hitSphere = null;
                     Vec3 hitPoint = null;
+                    var closestT = double.MaxValue;
                     foreach (var sphere in _spheres)
                     {
-                        if (sphere.Intersects(origin, newDir,  out var t))
+                        if (sphere.Intersects(origin, dir,  out var t) && t < closestT)
                         {
                             hitSphere = sphere;
-                            hitPoint = origin + t * newDir;
+                            hitPoint = origin + t * dir;
+                            closestT = t;
                         }
                     }
 

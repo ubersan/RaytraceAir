@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Win32.SafeHandles;
 
 namespace RaytraceAir
 {
@@ -33,6 +34,14 @@ namespace RaytraceAir
         public double Dot(Vec3 v)
         {
             return X * v.X + Y * v.Y + Z * v.Z;
+        }
+
+        public Vec3 Cross(Vec3 v)
+        {
+            return new Vec3(
+                Y*v.Z - Z*v.Y,
+                Z*v.X - X*v.Z,
+                X*v.Y - Y*v.X);
         }
 
         public static Vec3 operator +(Vec3 a, Vec3 b)

@@ -59,7 +59,8 @@ namespace RaytraceAir
             {
                 return false;
             }
-            else if (Math.Abs(discriminant) < 1e-12)
+
+            if (Math.Abs(discriminant) < 1e-12)
             {
                 x0 = x1 = -0.5 * b / a;
             }

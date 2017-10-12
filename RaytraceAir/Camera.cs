@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace RaytraceAir
+﻿namespace RaytraceAir
 {
     public class Camera
     {
@@ -10,6 +7,7 @@ namespace RaytraceAir
             Position = position;
             UpDirection = upDirection;
             ViewDirection = viewDirection;
+            RightDirection = ViewDirection.Cross(UpDirection);
             HorizontalFoV = horizontalFoV;
             WidthInPixel = widthInPixel;
             HeightInPixel = heightInPixel;
@@ -19,6 +17,7 @@ namespace RaytraceAir
         public Vec3 Position { get; }
         public Vec3 UpDirection { get; }
         public Vec3 ViewDirection { get; }
+        public Vec3 RightDirection { get; }
         public double HorizontalFoV { get; }
         public int WidthInPixel { get; }
         public int HeightInPixel { get; }
