@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -19,7 +20,7 @@ namespace RaytraceAir
             _lights = lights;
         }
 
-        public void Trace()
+        public void Render()
         {
             var scale = Math.Tan(deg2rad(_camera.HorizontalFoV * 0.5));
             var aspectRatio = _camera.WidthInPixel / (double) _camera.HeightInPixel;
@@ -34,36 +35,16 @@ namespace RaytraceAir
 
                     var dir = (_camera.ViewDirection + x*_camera.RightDirection + y*_camera.UpDirection).Normalized();
 
-                    Sphere hitSphere = null;
-                    Vec3 hitPoint = null;
-                    var closestT = double.MaxValue;
-                    foreach (var sphere in _spheres)
-                    {
-                        if (sphere.Intersects(origin, dir,  out var t) && t < closestT)
-                        {
-                            hitSphere = sphere;
-                            hitPoint = origin + t * dir;
-                            closestT = t;
-                        }
-                    }
-
-                    if (hitSphere != null)
+                    if (Trace(origin, dir, out var hitSphere, out var hitPoint))
                     {
                         var lightDir = (_lights[0] - hitPoint).Normalized();
                         var start = hitPoint + hitSphere.Normal(hitPoint) * 1e-6;
 
-                        Sphere shadowSphere = null;
-                        foreach (var sphere in _spheres)
+                        if (TraceShadow(start, lightDir))
                         {
-                            if (sphere.Intersects(start, lightDir, out var _))
-                            {
-                                shadowSphere = sphere;
-                                _camera.Pixels[i, j] = Vec3.Zeros();
-                                break;
-                            }
+                            _camera.Pixels[i, j] = Vec3.Zeros();
                         }
-                        
-                        if (shadowSphere == null)
+                        else
                         {
                             _camera.Pixels[i, j] = Vec3.Ones() * lightDir.Dot(hitSphere.Normal(hitPoint));
                         }
@@ -81,7 +62,41 @@ namespace RaytraceAir
             return deg * Math.PI / 180;
         }
 
-        public void Render()
+        private bool Trace(Vec3 origin, Vec3 dir, out Sphere hitSphere, out Vec3 hitPoint)
+        {
+            hitSphere = null;
+            hitPoint = Vec3.Zeros();
+
+            var closestT = double.MaxValue;
+            foreach (var sphere in _spheres)
+            {
+                if (sphere.Intersects(origin, dir, out var t) && t < closestT)
+                {
+                    hitSphere = sphere;
+                    hitPoint = origin + t * dir;
+                    closestT = t;
+                }
+            }
+
+            return hitSphere != null;
+        }
+
+        private bool TraceShadow(Vec3 origin,  Vec3 dir)
+        {
+            Sphere shadowSphere = null;
+            foreach (var sphere in _spheres)
+            {
+                if (sphere.Intersects(origin, dir, out var _))
+                {
+                    shadowSphere = sphere;
+                    break;
+                }
+            }
+
+            return shadowSphere != null;
+        }
+
+        public void Export()
         {
             using (var bmp = new Bitmap(_camera.WidthInPixel, _camera.HeightInPixel, PixelFormat.Format24bppRgb))
             {

@@ -8,7 +8,7 @@ namespace Renderer
     {
         static void Main()
         {
-            var camera = new Camera(new Vec3(0, 0, 0), new Vec3(0,  1, 0).Normalized(), new Vec3(0, 0, -1).Normalized(), 60, 1980, 1260);
+            var camera = new Camera(new Vec3(0, 0, 0), new Vec3(0, 1, 0).Normalized(), new Vec3(0, 0, -1).Normalized(), 60, 1980, 1260);
             var scene = new Scene(camera, new List<Sphere>
             {
                 new Sphere(new Vec3(-0.5, 0, -8), 0.5),
@@ -21,8 +21,8 @@ namespace Renderer
                 new Vec3(10, 10, -10)
             });
 
-            scene.Trace();
             scene.Render();
+            scene.Export();
         }
     }
 }
