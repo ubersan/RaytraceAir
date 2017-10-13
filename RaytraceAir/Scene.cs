@@ -22,25 +22,72 @@ namespace RaytraceAir
 
         public void Render()
         {
+            var maxx = double.MinValue;
+            var negCount = 0;
+
             foreach (var pixel in GetPixel())
             {
+                if (pixel.I == 917 && pixel.J == 706)
+                {
+                    var i = 313;
+                }
+
                 var originPrimaryRay = _camera.Position;
                 var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();
+                
 
                 if (Trace(originPrimaryRay, dir, out var hitSphere, out var hitPoint))
                 {
-                    var originShadowRay = hitPoint + hitSphere.Normal(hitPoint) * 1e-6;
-                    var lightDir = (_lights[0] - hitPoint).Normalized();
+                    var originShadowRay = hitPoint + hitSphere.Normal(hitPoint) * 1e-12;
 
-                    if (!TraceShadow(originShadowRay, lightDir))
+                    // TODO: Multiple lights
+                    foreach (var light in _lights)
                     {
-                        _camera.Pixels[pixel.I, pixel.J] = Vec3.Ones() * lightDir.Dot(hitSphere.Normal(hitPoint));
+                        var lightDir = (light- hitPoint).Normalized();
+                        if (!TraceShadow(originShadowRay, lightDir))
+                        {
+                            var contribution = lightDir.Dot(hitSphere.Normal(hitPoint));
+
+                            if (contribution < 0)
+                            {
+                                if (maxx < Math.Abs(contribution))
+                                {
+                                    maxx = Math.Abs(contribution);
+                                }
+
+                                ++negCount;
+                                contribution = 0;
+                            }
+
+                            // TODO: Max doesnt seem right, should not be neede when hit is seen it should contribute positively ...
+                            _camera.Pixels[pixel.I, pixel.J] += Vec3.Ones() * contribution;
+
+                            if (_camera.Pixels[pixel.I, pixel.J].X > 1)
+                            {
+                                var i = 313;
+                            }
+
+                            if (_camera.Pixels[pixel.I, pixel.J].X < 0)
+                            {
+                                var i = 313;
+                            }
+
+                            if (contribution < 0)
+                            {
+                                var i = 313;
+                            }
+                        }
                     }
                 }
                 else
                 {
                     _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
                 }
+            }
+
+            if (negCount > 0)
+            {
+                throw new InvalidOperationException();
             }
         }
 
@@ -96,7 +143,12 @@ namespace RaytraceAir
                     for (var i = 0; i < bmp.Width; ++i)
                     {
                         var px = _camera.Pixels[i, j];
-                        var col = new[] {(byte) (255 * px.X), (byte) (255 * px.Y), (byte) (255 * px.Z)};
+                        var col = new[]
+                        {
+                            (byte) (255 * px.X),
+                            (byte) (255 * px.Y),
+                            (byte) (255 * px.Z)
+                        };
                         Marshal.Copy(col, 0, data.Scan0 + (j * bmp.Width + i) * 3, 3);
                     }
                 }
