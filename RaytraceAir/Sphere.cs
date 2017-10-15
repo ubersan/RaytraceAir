@@ -2,7 +2,7 @@
 
 namespace RaytraceAir
 {
-    public class Sphere
+    public class Sphere : SceneObject
     {
         private readonly Vec3 _center;
         private readonly double _radius;
@@ -14,16 +14,15 @@ namespace RaytraceAir
             _radius = radius;
         }
 
-        public bool Intersects(Vec3 origin, Vec3 direction, out double t)
+        public override bool Intersects(Vec3 origin, Vec3 direction, out double t)
         {
-            double t0, t1;
             t = 0;
             var L = origin - _center;
             var a = direction.Dot(direction);
             var b = 2 * direction.Dot(L);
             var c = L.Dot(L) - _radius * _radius;
 
-            if (!SolveQuadratic(a, b, c, out t0, out t1))
+            if (!SolveQuadratic(a, b, c, out var t0, out var t1))
             {
                 return false;
             }
@@ -83,7 +82,7 @@ namespace RaytraceAir
             return true;
         }
 
-        public Vec3 Normal(Vec3 p)
+        public override Vec3 Normal(Vec3 p)
         {
             return (p - _center).Normalized();
         }

@@ -9,13 +9,13 @@ namespace RaytraceAir
     public class Scene
     {
         private readonly Camera _camera;
-        private readonly List<Sphere> _spheres;
+        private readonly List<SceneObject> _sceneObjects;
         private readonly List<Vec3> _lights;
 
-        public Scene(Camera camera, List<Sphere> spheres, List<Vec3> lights)
+        public Scene(Camera camera, List<SceneObject> sceneObjects, List<Vec3> lights)
         {
             _camera = camera;
-            _spheres = spheres;
+            _sceneObjects = sceneObjects;
             _lights = lights;
         }
 
@@ -26,16 +26,16 @@ namespace RaytraceAir
                 var originPrimaryRay = _camera.Position;
                 var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();   
 
-                if (Trace(originPrimaryRay, dir, out var hitSphere, out var hitPoint))
+                if (Trace(originPrimaryRay, dir, out var hitSceneObject, out var hitPoint))
                 {
-                    var originShadowRay = hitPoint + hitSphere.Normal(hitPoint) * 1e-12;
+                    var originShadowRay = hitPoint + hitSceneObject.Normal(hitPoint) * 1e-12;
 
                     foreach (var light in _lights)
                     {
                         var lightDir = (light- hitPoint).Normalized();
                         if (!TraceShadow(originShadowRay, lightDir))
                         {
-                            var contribution = lightDir.Dot(hitSphere.Normal(hitPoint));
+                            var contribution = lightDir.Dot(hitSceneObject.Normal(hitPoint));
                             _camera.Pixels[pixel.I, pixel.J] += Vec3.Ones() * Math.Max(0, contribution);
                         }
                     }
@@ -52,33 +52,33 @@ namespace RaytraceAir
             return deg * Math.PI / 180;
         }
 
-        private bool Trace(Vec3 origin, Vec3 dir, out Sphere hitSphere, out Vec3 hitPoint)
+        private bool Trace(Vec3 origin, Vec3 dir, out SceneObject hitSceneObject, out Vec3 hitPoint)
         {
-            hitSphere = null;
-            hitPoint = Vec3.Zeros();
+            hitSceneObject = null;
+            hitPoint = null;
 
             var closestT = double.MaxValue;
-            foreach (var sphere in _spheres)
+            foreach (var sceneObject in _sceneObjects)
             {
-                if (sphere.Intersects(origin, dir, out var t) && t < closestT)
+                if (sceneObject.Intersects(origin, dir, out var t) && t < closestT)
                 {
-                    hitSphere = sphere;
+                    hitSceneObject = sceneObject;
                     hitPoint = origin + t * dir;
                     closestT = t;
                 }
             }
 
-            return hitSphere != null;
+            return hitSceneObject != null;
         }
 
         private bool TraceShadow(Vec3 origin, Vec3 dir)
         {
-            Sphere shadowSphere = null;
-            foreach (var sphere in _spheres)
+            SceneObject shadowSphere = null;
+            foreach (var sceneObject in _sceneObjects)
             {
-                if (sphere.Intersects(origin, dir, out var _))
+                if (sceneObject.Intersects(origin, dir, out var _))
                 {
-                    shadowSphere = sphere;
+                    shadowSphere = sceneObject;
                     break;
                 }
             }
