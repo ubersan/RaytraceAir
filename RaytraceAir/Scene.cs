@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -12,7 +11,6 @@ namespace RaytraceAir
         private readonly Camera _camera;
         private readonly List<Sphere> _spheres;
         private readonly List<Vec3> _lights;
-        private bool _exportCheckEnabled = true;
 
         public Scene(Camera camera, List<Sphere> spheres, List<Vec3> lights)
         {
@@ -23,9 +21,6 @@ namespace RaytraceAir
 
         public void Render()
         {
-            var maxx = double.MinValue;
-            var negCount = 0;
-
             foreach (var pixel in GetPixel())
             {
                 var originPrimaryRay = _camera.Position;
@@ -35,42 +30,13 @@ namespace RaytraceAir
                 {
                     var originShadowRay = hitPoint + hitSphere.Normal(hitPoint) * 1e-12;
 
-                    // TODO: Multiple lights
                     foreach (var light in _lights)
                     {
                         var lightDir = (light- hitPoint).Normalized();
                         if (!TraceShadow(originShadowRay, lightDir))
                         {
                             var contribution = lightDir.Dot(hitSphere.Normal(hitPoint));
-
-                            if (contribution < 0)
-                            {
-                                if (maxx < Math.Abs(contribution))
-                                {
-                                    maxx = Math.Abs(contribution);
-                                }
-
-                                ++negCount;
-                                contribution = 0;
-                            }
-
-                            // TODO: Max doesnt seem right, should not be neede when hit is seen it should contribute positively ...
-                            _camera.Pixels[pixel.I, pixel.J] += Vec3.Ones() * contribution;
-
-                            if (_camera.Pixels[pixel.I, pixel.J].X > 1)
-                            {
-                                var i = 313;
-                            }
-
-                            if (_camera.Pixels[pixel.I, pixel.J].X < 0)
-                            {
-                                var i = 313;
-                            }
-
-                            if (contribution < 0)
-                            {
-                                var i = 313;
-                            }
+                            _camera.Pixels[pixel.I, pixel.J] += Vec3.Ones() * Math.Max(0, contribution);
                         }
                     }
                 }
@@ -78,16 +44,6 @@ namespace RaytraceAir
                 {
                     _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
                 }
-
-                if (pixel.I == 944)
-                {
-                    Console.WriteLine(_camera.Pixels[pixel.I, pixel.J].X);
-                }
-            }
-
-            if (negCount > 0)
-            {
-                throw new InvalidOperationException();
             }
         }
 
@@ -145,9 +101,9 @@ namespace RaytraceAir
                         var px = _camera.Pixels[i, j];
                         var col = new[]
                         {
-                            (byte) (255 * px.X),
-                            (byte) (255 * px.Y),
-                            (byte) (255 * px.Z)
+                            (byte) (255 * Clamp(0, 1, px.X)),
+                            (byte) (255 * Clamp(0, 1, px.Y)),
+                            (byte) (255 * Clamp(0, 1, px.Z))
                         };
                         Marshal.Copy(col, 0, data.Scan0 + (j * bmp.Width + i) * 3, 3);
                     }
@@ -156,37 +112,11 @@ namespace RaytraceAir
                 bmp.UnlockBits(data);
                 bmp.Save("bmp.bmp");
             }
+        }
 
-            // TODO: Make it possible to enable a check here,
-            // that the exported value matches the stored (and read back again) value
-            // this can dected e.g. overflows
-            if (_exportCheckEnabled)
-            {
-                for (var j = 0; j < _camera.HeightInPixel; ++j)
-                {
-                    for (var i = 0; i < _camera.WidthInPixel; ++i)
-                    {
-                        var px = _camera.Pixels[i, j];
-                        var col = new[]
-                        {
-                            (byte) (255 * px.X),
-                            (byte) (255 * px.Y),
-                            (byte) (255 * px.Z)
-                        };
-                        var check = new int[]
-                        {
-                            (int) (255 * px.X),
-                            (int) (255 * px.Y),
-                            (int) (255 * px.Z)
-                        };
-
-                        if (col[0] != check[0] || col[1] != check[1] || col[2] != check[2])
-                        {
-                            throw new InvalidOperationException("export check failed");
-                        }
-                    }
-                }
-            }
+        private double Clamp(double lo, double hi, double value)
+        {
+            return Math.Max(lo, Math.Min(hi, value));
         }
 
         private IEnumerable<Pixel> GetPixel()
