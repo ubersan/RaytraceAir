@@ -12,6 +12,7 @@ namespace RaytraceAir
         private readonly Camera _camera;
         private readonly List<Sphere> _spheres;
         private readonly List<Vec3> _lights;
+        private bool _exportCheckEnabled = true;
 
         public Scene(Camera camera, List<Sphere> spheres, List<Vec3> lights)
         {
@@ -27,14 +28,8 @@ namespace RaytraceAir
 
             foreach (var pixel in GetPixel())
             {
-                if (pixel.I == 917 && pixel.J == 706)
-                {
-                    var i = 313;
-                }
-
                 var originPrimaryRay = _camera.Position;
-                var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();
-                
+                var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();   
 
                 if (Trace(originPrimaryRay, dir, out var hitSphere, out var hitPoint))
                 {
@@ -82,6 +77,11 @@ namespace RaytraceAir
                 else
                 {
                     _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
+                }
+
+                if (pixel.I == 944)
+                {
+                    Console.WriteLine(_camera.Pixels[pixel.I, pixel.J].X);
                 }
             }
 
@@ -135,7 +135,7 @@ namespace RaytraceAir
             using (var bmp = new Bitmap(_camera.WidthInPixel, _camera.HeightInPixel, PixelFormat.Format24bppRgb))
             {
                 var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                    ImageLockMode.ReadWrite,
+                    ImageLockMode.WriteOnly,
                     bmp.PixelFormat);
 
                 for (var j = 0; j < bmp.Height; ++j)
@@ -155,6 +155,37 @@ namespace RaytraceAir
 
                 bmp.UnlockBits(data);
                 bmp.Save("bmp.bmp");
+            }
+
+            // TODO: Make it possible to enable a check here,
+            // that the exported value matches the stored (and read back again) value
+            // this can dected e.g. overflows
+            if (_exportCheckEnabled)
+            {
+                for (var j = 0; j < _camera.HeightInPixel; ++j)
+                {
+                    for (var i = 0; i < _camera.WidthInPixel; ++i)
+                    {
+                        var px = _camera.Pixels[i, j];
+                        var col = new[]
+                        {
+                            (byte) (255 * px.X),
+                            (byte) (255 * px.Y),
+                            (byte) (255 * px.Z)
+                        };
+                        var check = new int[]
+                        {
+                            (int) (255 * px.X),
+                            (int) (255 * px.Y),
+                            (int) (255 * px.Z)
+                        };
+
+                        if (col[0] != check[0] || col[1] != check[1] || col[2] != check[2])
+                        {
+                            throw new InvalidOperationException("export check failed");
+                        }
+                    }
+                }
             }
         }
 

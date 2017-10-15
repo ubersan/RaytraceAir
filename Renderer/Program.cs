@@ -18,13 +18,16 @@ namespace Renderer
             },
             new List<Vec3>
             {
-                //new Vec3(10, 10, -10),
+                new Vec3(10, 10, -10),
                 new Vec3(-4, -4, -10),
-                //new Vec3(0, 0, -7)
+                new Vec3(0, 0, -8.5),
+                new Vec3(0, 0, -7.5),
             });
 
             scene.Render();
             scene.Export();
+
+            Console.ReadKey();
         }
     }
 }
