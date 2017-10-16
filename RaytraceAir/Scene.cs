@@ -21,6 +21,7 @@ namespace RaytraceAir
 
         public void Render()
         {
+            System.Numerics.Vector3 v;
             foreach (var pixel in GetPixel())
             {
                 var originPrimaryRay = _camera.Position;
