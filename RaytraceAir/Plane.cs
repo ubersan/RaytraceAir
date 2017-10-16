@@ -1,4 +1,6 @@
-﻿namespace RaytraceAir
+﻿using System;
+
+namespace RaytraceAir
 {
     public class Plane : SceneObject
     {
@@ -14,14 +16,10 @@
         public override bool Intersects(Vec3 origin, Vec3 direction, out double t)
         {
             var denominator = _normal.Dot(direction);
-            if (denominator > 1e-12)
+            if (Math.Abs(denominator) > 1e-14)
             {
-                var p2o = _pointOnPlane - origin;
-                t = p2o.Dot(_normal) / denominator;
-                if (t >= 0)
-                {
-                    return true;
-                }
+                t = (_pointOnPlane - origin).Dot(_normal) / denominator;
+                return t >= 0;
             }
 
             t = 0;

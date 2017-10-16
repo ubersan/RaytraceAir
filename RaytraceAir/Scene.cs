@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace RaytraceAir
@@ -21,8 +22,7 @@ namespace RaytraceAir
 
         public void Render()
         {
-            System.Numerics.Vector3 v;
-            foreach (var pixel in GetPixel())
+           foreach (var pixel in GetPixel())
             {
                 var originPrimaryRay = _camera.Position;
                 var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();   
