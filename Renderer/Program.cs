@@ -9,7 +9,7 @@ namespace Renderer
         static void Main()
         {
             var camera = new Camera(
-                position: new Vec3(0, 0, 0),
+                position: new Vec3(2, 0, 0),
                 upDirection: new Vec3(0, 1, 0).Normalized(),
                 viewDirection: new Vec3(0, 0, -1).Normalized(),
                 horizontalFoV: 60,
