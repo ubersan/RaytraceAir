@@ -38,6 +38,8 @@ namespace RaytraceAir
                         if (!TraceShadow(originShadowRay, lightDir, lightDist.Norm))
                         {
                             var contribution = lightDir.Dot(hitSceneObject.Normal(hitPoint));
+                            contribution *= 200;
+                            contribution /= 4 * Math.PI * lightDist.Norm * lightDist.Norm;
                             _camera.Pixels[pixel.I, pixel.J] += Vec3.Ones() * Math.Max(0, contribution);
                         }
                     }
