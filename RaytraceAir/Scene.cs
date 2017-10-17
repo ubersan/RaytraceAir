@@ -22,10 +22,13 @@ namespace RaytraceAir
 
         public void Render()
         {
-           foreach (var pixel in GetPixel())
+            foreach (var pixel in GetPixel())
             {
+                _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
+
                 var originPrimaryRay = _camera.Position;
-                var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();   
+                var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection)
+                    .Normalized();
 
                 if (Trace(originPrimaryRay, dir, out var hitSceneObject, out var hitPoint))
                 {
@@ -33,20 +36,20 @@ namespace RaytraceAir
 
                     foreach (var light in _lights)
                     {
-                        var lightDist = light- hitPoint;
+                        var lightDist = light - hitPoint;
                         var lightDir = lightDist.Normalized();
-                        if (!TraceShadow(originShadowRay, lightDir, lightDist.Norm))
+
+                        var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist.Norm);
+                        if (Math.Abs(isIlluminated - 1d) < 1e-14)
                         {
-                            var contribution = lightDir.Dot(hitSceneObject.Normal(hitPoint));
-                            contribution *= 200;
-                            contribution /= 4 * Math.PI * lightDist.Norm * lightDist.Norm;
-                            _camera.Pixels[pixel.I, pixel.J] += Vec3.Ones() * Math.Max(0, contribution);
+                            var i = 313;
                         }
+                        var contribution = lightDir.Dot(hitSceneObject.Normal(hitPoint));
+                        contribution *= 4000 * hitSceneObject.Albedo / Math.PI;
+                        contribution /= 4 * Math.PI * lightDist.Norm * lightDist.Norm;
+
+                        _camera.Pixels[pixel.I, pixel.J] = isIlluminated * Vec3.Ones() * Math.Max(0, contribution);
                     }
-                }
-                else
-                {
-                    _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
                 }
             }
         }
@@ -75,7 +78,7 @@ namespace RaytraceAir
             return hitSceneObject != null;
         }
 
-        private bool TraceShadow(Vec3 origin, Vec3 dir, double distToLight)
+        private double TraceShadow(Vec3 origin, Vec3 dir, double distToLight)
         {
             SceneObject shadowSphere = null;
             foreach (var sceneObject in _sceneObjects)
@@ -87,40 +90,7 @@ namespace RaytraceAir
                 }
             }
 
-            return shadowSphere != null;
-        }
-
-        public void Export()
-        {
-            using (var bmp = new Bitmap(_camera.WidthInPixel, _camera.HeightInPixel, PixelFormat.Format24bppRgb))
-            {
-                var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                    ImageLockMode.WriteOnly,
-                    bmp.PixelFormat);
-
-                for (var j = 0; j < bmp.Height; ++j)
-                {
-                    for (var i = 0; i < bmp.Width; ++i)
-                    {
-                        var px = _camera.Pixels[i, j];
-                        var col = new[]
-                        {
-                            (byte) (255 * Clamp(0, 1, px.X)),
-                            (byte) (255 * Clamp(0, 1, px.Y)),
-                            (byte) (255 * Clamp(0, 1, px.Z))
-                        };
-                        Marshal.Copy(col, 0, data.Scan0 + (j * bmp.Width + i) * 3, 3);
-                    }
-                }
-
-                bmp.UnlockBits(data);
-                bmp.Save("bmp.bmp");
-            }
-        }
-
-        private double Clamp(double lo, double hi, double value)
-        {
-            return Math.Max(lo, Math.Min(hi, value));
+            return shadowSphere != null ? 0d : 1d;
         }
 
         private IEnumerable<Pixel> GetPixel()
