@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Numerics;
-using System.Runtime.InteropServices;
 
 namespace RaytraceAir
 {
@@ -11,9 +7,9 @@ namespace RaytraceAir
     {
         private readonly Camera _camera;
         private readonly List<SceneObject> _sceneObjects;
-        private readonly List<Vec3> _lights;
+        private readonly List<Light> _lights;
 
-        public Scene(Camera camera, List<SceneObject> sceneObjects, List<Vec3> lights)
+        public Scene(Camera camera, List<SceneObject> sceneObjects, List<Light> lights)
         {
             _camera = camera;
             _sceneObjects = sceneObjects;
@@ -24,6 +20,11 @@ namespace RaytraceAir
         {
             foreach (var pixel in GetPixel())
             {
+                if (pixel.I == 990 && pixel.J == 506)
+                {
+                    var i = 313;
+                }
+
                 _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
 
                 var originPrimaryRay = _camera.Position;
@@ -36,17 +37,17 @@ namespace RaytraceAir
 
                     foreach (var light in _lights)
                     {
-                        var lightDist = light - hitPoint;
-                        var lightDir = lightDist.Normalized();
+                        var lightDist = light.GetDistToLight(hitPoint);
+                        var lightDir = light.GetDirToLight(hitPoint);
 
-                        var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist.Norm);
+                        var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
                         if (Math.Abs(isIlluminated - 1d) < 1e-14)
                         {
                             var i = 313;
                         }
                         var contribution = lightDir.Dot(hitSceneObject.Normal(hitPoint));
-                        contribution *= 4000 * hitSceneObject.Albedo / Math.PI;
-                        contribution /= 4 * Math.PI * lightDist.Norm * lightDist.Norm;
+                        contribution *= 15 * hitSceneObject.Albedo / Math.PI;
+                        contribution /= light.GetFalloff(lightDist);
 
                         _camera.Pixels[pixel.I, pixel.J] = isIlluminated * Vec3.Ones() * Math.Max(0, contribution);
                     }

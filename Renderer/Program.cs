@@ -33,13 +33,10 @@ namespace Renderer
                     //new Sphere(new Vec3(-1, -2, -10),  0.6),
                     new Plane(new Vec3(0, -1, 0), new Vec3(0, 1, 0))
                 },
-                new List<Vec3>
+                new List<Light>
                 {
-                    new Vec3(0, 5, -10)
-                    //new Vec3(4, 4, -10),    
-                    //new Vec3(-4, 4, -10),
-                    //new Vec3(0, 0, -8.5),
-                    //new Vec3(0, 0, -7.5),
+                    //new PointLight(new Vec3(0, 5, -10), new Vec3(1, 1, 1))
+                    new DistantLight(new Vec3(-1, -1, 0).Normalized(), new Vec3(1, 1, 1))
                 });
 
             scene.Render();
