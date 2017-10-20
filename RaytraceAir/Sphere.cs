@@ -6,9 +6,9 @@ namespace RaytraceAir
     {
         private readonly Vec3 _center;
         private readonly double _radius;
-        private Random random = new Random();
 
-        public Sphere(Vec3 center, double radius)
+        public Sphere(Vec3 center, double radius, Vec3 color)
+            : base(color)
         {
             _center = center;
             _radius = radius;

@@ -7,7 +7,7 @@
             Position = position;
             UpDirection = upDirection;
             ViewDirection = viewDirection;
-            RightDirection = ViewDirection.Cross(UpDirection);
+            RightDirection = ViewDirection.Cross(UpDirection).Normalized();
             HorizontalFoV = horizontalFoV;
             WidthInPixel = widthInPixel;
             HeightInPixel = heightInPixel;

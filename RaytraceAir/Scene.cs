@@ -20,11 +20,6 @@ namespace RaytraceAir
         {
             foreach (var pixel in GetPixel())
             {
-                if (pixel.I == 990 && pixel.J == 506)
-                {
-                    var i = 313;
-                }
-
                 _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
 
                 var originPrimaryRay = _camera.Position;
@@ -41,15 +36,12 @@ namespace RaytraceAir
                         var lightDir = light.GetDirToLight(hitPoint);
 
                         var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
-                        if (Math.Abs(isIlluminated - 1d) < 1e-14)
-                        {
-                            var i = 313;
-                        }
+
                         var contribution = lightDir.Dot(hitSceneObject.Normal(hitPoint));
-                        contribution *= 15 * hitSceneObject.Albedo / Math.PI;
+                        contribution *= 4000  * hitSceneObject.Albedo / Math.PI;
                         contribution /= light.GetFalloff(lightDist);
 
-                        _camera.Pixels[pixel.I, pixel.J] = isIlluminated * Vec3.Ones() * Math.Max(0, contribution);
+                        _camera.Pixels[pixel.I, pixel.J] = isIlluminated * hitSceneObject.Color * light.Color * Math.Max(0, contribution);
                     }
                 }
             }
