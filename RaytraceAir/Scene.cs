@@ -23,12 +23,17 @@ namespace RaytraceAir
                 var originPrimaryRay = _camera.Position;
                 var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();
 
-                _camera.Pixels[pixel.I, pixel.J] = CastRay(originPrimaryRay, dir);
+                _camera.Pixels[pixel.I, pixel.J] = CastRay(originPrimaryRay, dir, 0);
             }
         }
 
-        private Vec3 CastRay(Vec3 origin, Vec3 dir)
+        private Vec3 CastRay(Vec3 origin, Vec3 dir, int depth)
         {
+            if (depth == 3)
+            {
+                return Vec3.Zeros;
+            }
+
             var color = Vec3.Zeros;
 
             if (Trace(origin, dir, out var hitSceneObject, out var hitPoint))
@@ -49,11 +54,11 @@ namespace RaytraceAir
                     // TODO: BRDF und MIRROR
                     color += isIlluminated * hitSceneObject.Color * light.Color * Math.Max(0, contribution);
 
-                    /*if (isIlluminated)
+                    if (hitSceneObject.IsMirror && isIlluminated > 0)
                     {
                         var reflectionDir = GetReflectionDir(dir, hitSceneObject.Normal(hitPoint));
-                        _camera.Pixels[pixel.I,  pixel.J] += 0.8
-                    }*/
+                        color += 0.8 * CastRay(originShadowRay, reflectionDir, ++depth);
+                    }
                 }
             }
             else

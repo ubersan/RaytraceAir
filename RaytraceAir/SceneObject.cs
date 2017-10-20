@@ -2,7 +2,7 @@
 {
     public abstract class SceneObject
     {
-        protected SceneObject(Vec3 color, bool isMirror = false)
+        protected SceneObject(Vec3 color, bool isMirror)
         {
             Color = color;
             IsMirror = isMirror;

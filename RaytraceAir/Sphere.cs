@@ -7,8 +7,8 @@ namespace RaytraceAir
         private readonly Vec3 _center;
         private readonly double _radius;
 
-        public Sphere(Vec3 center, double radius, Vec3 color)
-            : base(color)
+        public Sphere(Vec3 center, double radius, Vec3 color, bool isMirror = false)
+            : base(color, isMirror)
         {
             _center = center;
             _radius = radius;
