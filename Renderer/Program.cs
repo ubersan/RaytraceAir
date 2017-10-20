@@ -24,7 +24,7 @@ namespace Renderer
                 {
                     new Sphere(new Vec3(-4, 0, -10), 0.75, new Vec3(1, 0, 0)),
                     new Sphere(new Vec3(-2, 0, -10), 0.75, new Vec3(1, 1, 0)),
-                    new Sphere(new Vec3(-0, 0, -10), 0.75, new Vec3(0, 1, 0)),
+                    new Sphere(new Vec3(-0, 0, -10), 0.75, new Vec3(1, 1, 1)),
                     new Sphere(new Vec3(2, 0, -10), 0.75, new Vec3(0, 1, 1)),
                     new Sphere(new Vec3(4, 0, -10), 0.75, new Vec3(0, 0, 1)),
                     //new Sphere(new Vec3(-0.5, 0, -8), 0.5),
@@ -35,7 +35,7 @@ namespace Renderer
                 },
                 new List<Light>
                 {
-                    new PointLight(new Vec3(0, 5, -10), new Vec3(1, 1, 1))
+                    new PointLight(new Vec3(0, 5, -10), new Vec3(0, 1, 0))
                     //new DistantLight(new Vec3(-1, -1, 0).Normalized(), new Vec3(1, 1, 1))
                 });
 

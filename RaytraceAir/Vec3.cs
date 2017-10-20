@@ -15,16 +15,6 @@ namespace RaytraceAir
             Norm = Math.Sqrt(X * X + Y * Y + Z * Z);
         }
 
-        public static Vec3 Ones()
-        {
-            return new Vec3(1, 1, 1);
-        }
-
-        public static Vec3 Zeros()
-        {
-            return new Vec3(0, 0, 0);
-        }
-
         public Vec3 Normalized()
         {
             return new Vec3(X / Norm, Y / Norm, Z / Norm);
@@ -110,5 +100,11 @@ namespace RaytraceAir
         public double Y { get; }
         public double Z { get; }
         public double Norm { get; }
+
+        public static Vec3 Ones { get; } = new Vec3(1, 1, 1);
+
+        public static Vec3 Zeros { get; } = new Vec3(0, 0, 0);
+
+        public static Vec3 Background { get; } = new Vec3(0.8, 0.2, 0.3);
     }
 }

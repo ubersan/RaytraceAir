@@ -26,8 +26,8 @@ namespace RaytraceAirTest
         [TestMethod]
         public void DotTest()
         {
-            var a = Vec3.Ones();
-            var b = Vec3.Ones();
+            var a = Vec3.Ones;
+            var b = Vec3.Ones;
             var dot = a.Dot(b);
             Assert.AreEqual(dot, 3.0);
         }

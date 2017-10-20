@@ -20,36 +20,58 @@ namespace RaytraceAir
         {
             foreach (var pixel in GetPixel())
             {
-                _camera.Pixels[pixel.I, pixel.J] = new Vec3(0.8, 0.2, 0.3);
-
                 var originPrimaryRay = _camera.Position;
-                var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection)
-                    .Normalized();
+                var dir = (_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection).Normalized();
 
-                if (Trace(originPrimaryRay, dir, out var hitSceneObject, out var hitPoint))
+                _camera.Pixels[pixel.I, pixel.J] = CastRay(originPrimaryRay, dir);
+            }
+        }
+
+        private Vec3 CastRay(Vec3 origin, Vec3 dir)
+        {
+            var color = Vec3.Zeros;
+
+            if (Trace(origin, dir, out var hitSceneObject, out var hitPoint))
+            {
+                var originShadowRay = hitPoint + hitSceneObject.Normal(hitPoint) * 1e-12;
+
+                foreach (var light in _lights)
                 {
-                    var originShadowRay = hitPoint + hitSceneObject.Normal(hitPoint) * 1e-12;
+                    var lightDist = light.GetDistToLight(hitPoint);
+                    var lightDir = light.GetDirToLight(hitPoint);
 
-                    foreach (var light in _lights)
+                    var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
+
+                    var contribution = lightDir.Dot(hitSceneObject.Normal(hitPoint));
+                    contribution *= 4000 * hitSceneObject.Albedo / Math.PI;
+                    contribution /= light.GetFalloff(lightDist);
+
+                    // TODO: BRDF und MIRROR
+                    color += isIlluminated * hitSceneObject.Color * light.Color * Math.Max(0, contribution);
+
+                    /*if (isIlluminated)
                     {
-                        var lightDist = light.GetDistToLight(hitPoint);
-                        var lightDir = light.GetDirToLight(hitPoint);
-
-                        var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
-
-                        var contribution = lightDir.Dot(hitSceneObject.Normal(hitPoint));
-                        contribution *= 4000  * hitSceneObject.Albedo / Math.PI;
-                        contribution /= light.GetFalloff(lightDist);
-
-                        _camera.Pixels[pixel.I, pixel.J] = isIlluminated * hitSceneObject.Color * light.Color * Math.Max(0, contribution);
-                    }
+                        var reflectionDir = GetReflectionDir(dir, hitSceneObject.Normal(hitPoint));
+                        _camera.Pixels[pixel.I,  pixel.J] += 0.8
+                    }*/
                 }
             }
+            else
+            {
+                return Vec3.Background;
+            }
+
+            return color;
         }
 
         private double deg2rad(double deg)
         {
             return deg * Math.PI / 180;
+        }
+
+        private Vec3 GetReflectionDir(Vec3 viewDir, Vec3 normal)
+        {
+            return viewDir - 2 * viewDir.Dot(normal) * normal;
         }
 
         private bool Trace(Vec3 origin, Vec3 dir, out SceneObject hitSceneObject, out Vec3 hitPoint)

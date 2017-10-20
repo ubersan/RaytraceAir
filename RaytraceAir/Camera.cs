@@ -17,7 +17,7 @@
             {
                 for (var j = 0; j < HeightInPixel; ++j)
                 {
-                    Pixels[i, j] = Vec3.Zeros();
+                    Pixels[i, j] = Vec3.Zeros;
                 }
             }
         }
