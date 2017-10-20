@@ -7,7 +7,7 @@ namespace RaytraceAir
 {
     public static class BitmapExporter
     {
-        public static void Export(Camera camera)
+        public static void Export(Camera camera, string filename)
         {
             using (var bmp = new Bitmap(camera.WidthInPixel, camera.HeightInPixel, PixelFormat.Format24bppRgb))
             {
@@ -32,7 +32,7 @@ namespace RaytraceAir
                 }
 
                 bmp.UnlockBits(data);
-                bmp.Save(@"..\..\..\Output\bmp.bmp");
+                bmp.Save($@"..\..\..\Output\{filename}.bmp");
             }
         }
 
