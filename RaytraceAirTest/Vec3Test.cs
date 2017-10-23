@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RaytraceAir;
 
 namespace RaytraceAirTest
 {
     [TestClass]
-    public class Vec3Test
+    public class Vector3Test
     {
         private readonly Random _random = new Random();
         private const double EqualityTolerance = 1e-12;
-        private List<Vec3> _vectors;
+        private List<Vector3> _vectors;
         private List<double> _results;
 
         [TestMethod]
@@ -25,19 +25,19 @@ namespace RaytraceAirTest
         [TestMethod]
         public void DotTest()
         {
-            var a = Vec3.Ones;
-            var b = Vec3.Ones;
-            var dot = a.Dot(b);
+            var a = Vector3.One;
+            var b = Vector3.One;
+            var dot = Vector3.Dot(a, b);
             Assert.AreEqual(dot, 3.0);
         }
 
         [TestMethod]
         public void AddTest()
         {
-            var a = new Vec3(1, 1, 1);
-            var b = new Vec3(-1, 2, 0.5);
+            var a = new Vector3(1, 1, 1);
+            var b = new Vector3(-1, 2, 0.5f);
             var c = a + b;
-            Assert.AreEqual(new Vec3(0, 3, 1.5), c);
+            Assert.AreEqual(new Vector3(0, 3, 1.5f), c);
         }
 
         #region Given methods
@@ -45,7 +45,7 @@ namespace RaytraceAirTest
         private void Given_RandomVectors()
         {
             _vectors = Enumerable.Range(0, 100)
-                .Select(i => new Vec3(_random.NextDouble(), _random.NextDouble(), _random.NextDouble()))
+                .Select(i => new Vector3(_random.NextDouble(), _random.NextDouble(), _random.NextDouble()))
                 .ToList();
         }
 

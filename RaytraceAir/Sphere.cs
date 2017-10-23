@@ -1,26 +1,27 @@
 ﻿using System;
+using System.Numerics;
 
 namespace RaytraceAir
 {
     public class Sphere : SceneObject
     {
-        private readonly Vec3 _center;
-        private readonly double _radius;
+        private readonly Vector3 _center;
+        private readonly float _radius;
 
-        public Sphere(Vec3 center, double radius, Vec3 color, Material material =  Material.Diffuse)
+        public Sphere(Vector3 center, float radius, Vector3 color, Material material =  Material.Diffuse)
             : base(color, material)
         {
             _center = center;
             _radius = radius;
         }
 
-        public override bool Intersects(Vec3 origin, Vec3 direction, out double t)
+        public override bool Intersects(Vector3 origin, Vector3 direction, out float t)
         {
             t = 0;
             var L = origin - _center;
-            var a = direction.Dot(direction);
-            var b = 2 * direction.Dot(L);
-            var c = L.Dot(L) - _radius * _radius;
+            var a = Vector3.Dot(direction, direction);
+            var b = 2 * Vector3.Dot(direction, L);
+            var c = Vector3.Dot(L, L) - _radius * _radius;
 
             if (!SolveQuadratic(a, b, c, out var t0, out var t1))
             {
@@ -48,7 +49,7 @@ namespace RaytraceAir
             return true;
         }
 
-        private bool SolveQuadratic(double a, double b, double c, out double x0, out double x1)
+        private bool SolveQuadratic(float a, float b, float c, out float x0, out float x1)
         {
             x0 = 0;
             x1 = 0;
@@ -61,13 +62,13 @@ namespace RaytraceAir
 
             if (Math.Abs(discriminant) < 1e-12)
             {
-                x0 = x1 = -0.5 * b / a;
+                x0 = x1 = -0.5f * b / a;
             }
             else
             {
                 var q = b > 0
-                    ? -0.5 * (b + Math.Sqrt(discriminant))
-                    : -0.5 * (b - Math.Sqrt(discriminant));
+                    ? -0.5f * (b + (float)Math.Sqrt(discriminant))
+                    : -0.5f * (b - (float)Math.Sqrt(discriminant));
                 x0 = q / a;
                 x1 = c / q;
             }
@@ -82,9 +83,9 @@ namespace RaytraceAir
             return true;
         }
 
-        public override Vec3 Normal(Vec3 p)
+        public override Vector3 Normal(Vector3 p)
         {
-            return (p - _center).Normalized();
+            return Vector3.Normalize(p - _center);
         }
     }
 }

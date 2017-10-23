@@ -1,30 +1,31 @@
 ﻿using System;
+using System.Numerics;
 
 namespace RaytraceAir
 {
     public class PointLight : Light
     {
-        private readonly Vec3 _position;
+        private readonly Vector3 _position;
 
-        public PointLight(Vec3 position, Vec3 color)
+        public PointLight(Vector3 position, Vector3 color)
             : base(color)
         {
             _position = position;
         }
 
-        public override double GetFalloff(double distance)
+        public override float GetFalloff(float distance)
         {
-            return 4 * Math.PI * distance * distance;
+            return 4f * (float)Math.PI * distance * distance;
         }
 
-        public override double GetDistToLight(Vec3 hitPoint)
+        public override float GetDistToLight(Vector3 hitPoint)
         {
-            return (_position - hitPoint).Norm;
+            return (_position - hitPoint).Length();
         }
 
-        public override Vec3 GetDirToLight(Vec3 hitPoint)
+        public override Vector3 GetDirToLight(Vector3 hitPoint)
         {
-            return (_position - hitPoint).Normalized();
+            return Vector3.Normalize(_position - hitPoint);
         }
     }
 }

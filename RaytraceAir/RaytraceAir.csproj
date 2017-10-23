@@ -58,6 +58,7 @@
     <Compile Include="SceneObject.cs" />
     <Compile Include="Sphere.cs" />
     <Compile Include="Vec3.cs" />
+    <Compile Include="Vector3Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

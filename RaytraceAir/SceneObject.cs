@@ -1,19 +1,21 @@
-﻿namespace RaytraceAir
+﻿using System.Numerics;
+
+namespace RaytraceAir
 {
     public abstract class SceneObject
     {
-        protected SceneObject(Vec3 color, Material material)
+        protected SceneObject(Vector3 color, Material material)
         {
             Color = color;
             Material = material;
         }
 
-        public abstract bool Intersects(Vec3 origin, Vec3 direction, out double t);
-        public abstract Vec3 Normal(Vec3 p);
+        public abstract bool Intersects(Vector3 origin, Vector3 direction, out float t);
+        public abstract Vector3 Normal(Vector3 p);
 
-        public Vec3 Color { get; }
+        public Vector3 Color { get; }
         public Material Material { get; }
 
-        public double Albedo = 0.18;
+        public float Albedo = 0.18f;
     }
 }

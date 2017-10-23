@@ -1,16 +1,18 @@
-﻿namespace RaytraceAir
+﻿using System.Numerics;
+
+namespace RaytraceAir
 {
     public abstract class Light
     {
-        protected Light(Vec3 color)
+        protected Light(Vector3 color)
         {
             Color = color;
         }
 
-        public Vec3 Color { get; }
+        public Vector3 Color { get; }
 
-        public abstract double GetFalloff(double distance);
-        public abstract double GetDistToLight(Vec3 hitPoint);
-        public abstract Vec3 GetDirToLight(Vec3 hitPoint);
+        public abstract float GetFalloff(float distance);
+        public abstract float GetDistToLight(Vector3 hitPoint);
+        public abstract Vector3 GetDirToLight(Vector3 hitPoint);
     }
 }

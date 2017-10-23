@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Numerics;
 using RaytraceAir;
+using Plane = RaytraceAir.Plane;
 
 namespace Renderer
 {
@@ -25,9 +27,9 @@ namespace Renderer
         private static void RenderSingleFrame()
         {
             var camera = new Camera(
-                position: new Vec3(0, 3, 10),
-                upDirection: new Vec3(0, 10, -1.8).Normalized(),
-                viewDirection: new Vec3(0, -1.8, -10).Normalized(),
+                position: new Vector3(0, 3, 10),
+                upDirection: Vector3.Normalize(new Vector3(0, 10, -1.8f)),
+                viewDirection: Vector3.Normalize(new Vector3(0, -1.8f, -10)),
                 horizontalFoV: 30,
                 widthInPixel: 1980,
                 heightInPixel: 1260);
@@ -36,16 +38,16 @@ namespace Renderer
                 camera,
                 new List<SceneObject>
                 {
-                    new Sphere(new Vec3(-4, 0, -10), 0.75, new Vec3(1, 0, 0)),
-                    new Sphere(new Vec3(-2, 0, -10), 0.75, new Vec3(1, 1, 0)),
-                    new Sphere(new Vec3(-0, 0, -10), 0.75, new Vec3(0, 1, 0)),
-                    new Sphere(new Vec3(2, 0, -10), 0.75, new Vec3(0, 1, 1)),
-                    new Sphere(new Vec3(4, 0, -10), 0.75, new Vec3(0, 0, 1)),
-                    new Plane(new Vec3(0, -1, 0), new Vec3(0, 1, 0), new Vec3(1, 1, 1))
+                    new Sphere(new Vector3(-4, 0, -10), 0.75f, new Vector3(1, 0, 0)),
+                    new Sphere(new Vector3(-2, 0, -10), 0.75f, new Vector3(1, 1, 0)),
+                    new Sphere(new Vector3(-0, 0, -10), 0.75f, new Vector3(0, 1, 0)),
+                    new Sphere(new Vector3(2, 0, -10), 0.75f, new Vector3(0, 1, 1)),
+                    new Sphere(new Vector3(4, 0, -10), 0.75f, new Vector3(0, 0, 1)),
+                    new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1))
                 },
                 new List<Light>
                 {
-                    new PointLight(new Vec3(0, 5, -8), new Vec3(1, 1, 1)),
+                    new PointLight(new Vector3(0, 5, -8), new Vector3(1, 1, 1)),
                 });
 
             scene.Render();
@@ -56,16 +58,16 @@ namespace Renderer
         {
             var folder = Directory.CreateDirectory($@"..\..\..\Output\{Guid.NewGuid().ToString()}");
 
-            var start = new Vec3(-5, 5, -8);
-            var end = new Vec3(5, 5, -8);
+            var start = new Vector3(-5, 5, -8);
+            var end = new Vector3(5, 5, -8);
             var step = (end - start) / numSteps;
 
             for (var i = 0; i < numSteps; ++i)
             {
                 var camera = new Camera(
-                    position: new Vec3(0, 3, 10),
-                    upDirection: new Vec3(0, 10, -1.8).Normalized(),
-                    viewDirection: new Vec3(0, -1.8, -10).Normalized(),
+                    position: new Vector3(0, 3, 10),
+                    upDirection: Vector3.Normalize(new Vector3(0, 10, -1.8f)),
+                    viewDirection: Vector3.Normalize(new Vector3(0, -1.8f, -10)),
                     horizontalFoV: 30,
                     widthInPixel: 1980,
                     heightInPixel: 1260);
@@ -74,16 +76,16 @@ namespace Renderer
                     camera,
                     new List<SceneObject>
                     {
-                        new Sphere(new Vec3(-4, 0, -10), 0.75, new Vec3(1, 0, 0)),
-                        new Sphere(new Vec3(-2, 0, -10), 0.75, new Vec3(1, 1, 0)),
-                        new Sphere(new Vec3(-0, 0, -10), 0.75, new Vec3(0, 1, 0)),
-                        new Sphere(new Vec3(2, 0, -10), 0.75, new Vec3(0, 1, 1)),
-                        new Sphere(new Vec3(4, 0, -10), 0.75, new Vec3(0, 0, 1)),
-                        new Plane(new Vec3(0, -1, 0), new Vec3(0, 1, 0), new Vec3(1, 1, 1))
+                        new Sphere(new Vector3(-4, 0, -10), 0.75f, new Vector3(1, 0, 0)),
+                        new Sphere(new Vector3(-2, 0, -10), 0.75f, new Vector3(1, 1, 0)),
+                        new Sphere(new Vector3(-0, 0, -10), 0.75f, new Vector3(0, 1, 0)),
+                        new Sphere(new Vector3(2, 0, -10), 0.75f, new Vector3(0, 1, 1)),
+                        new Sphere(new Vector3(4, 0, -10), 0.75f, new Vector3(0, 0, 1)),
+                        new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1))
                     },
                     new List<Light>
                     {
-                        new PointLight(start + i * step, new Vec3(1, 1, 1)),
+                        new PointLight(start + i * step, new Vector3(1, 1, 1)),
                     });
 
                 scene.Render();

@@ -1,25 +1,26 @@
 ﻿using System;
+using System.Numerics;
 
 namespace RaytraceAir
 {
     public class Plane : SceneObject
     {
-        private readonly Vec3 _pointOnPlane;
-        private readonly Vec3 _normal;
+        private readonly Vector3 _pointOnPlane;
+        private readonly Vector3 _normal;
 
-        public Plane(Vec3 pointOnPlane, Vec3 normal, Vec3 color, Material material =  Material.Diffuse)
+        public Plane(Vector3 pointOnPlane, Vector3 normal, Vector3 color, Material material =  Material.Diffuse)
             : base(color, material)
         {
             _pointOnPlane = pointOnPlane;
             _normal = normal;
         }
 
-        public override bool Intersects(Vec3 origin, Vec3 direction, out double t)
+        public override bool Intersects(Vector3 origin, Vector3 direction, out float t)
         {
-            var denominator = _normal.Dot(direction);
+            var denominator = Vector3.Dot(_normal, direction);
             if (Math.Abs(denominator) > 1e-14)
             {
-                t = (_pointOnPlane - origin).Dot(_normal) / denominator;
+                t = Vector3.Dot(_pointOnPlane - origin, _normal) / denominator;
                 return t >= 0;
             }
 
@@ -27,7 +28,7 @@ namespace RaytraceAir
             return false;
         }
 
-        public override Vec3 Normal(Vec3 p)
+        public override Vector3 Normal(Vector3 p)
         {
             return _normal;
         }
