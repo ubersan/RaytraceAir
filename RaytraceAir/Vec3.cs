@@ -63,6 +63,11 @@ namespace RaytraceAir
             return new Vec3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
         }
 
+        public static Vec3 operator /(Vec3 a, double c)
+        {
+            return new Vec3(a.X / c, a.Y / c, a.Z / c);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is Vec3 v)

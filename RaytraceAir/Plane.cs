@@ -7,8 +7,8 @@ namespace RaytraceAir
         private readonly Vec3 _pointOnPlane;
         private readonly Vec3 _normal;
 
-        public Plane(Vec3 pointOnPlane, Vec3 normal, Vec3 color, bool isMirror = false)
-            : base(color, isMirror)
+        public Plane(Vec3 pointOnPlane, Vec3 normal, Vec3 color, Material material =  Material.Diffuse)
+            : base(color, material)
         {
             _pointOnPlane = pointOnPlane;
             _normal = normal;

@@ -32,10 +32,31 @@ namespace RaytraceAir
                 }
 
                 bmp.UnlockBits(data);
-                bmp.Save($@"..\..\..\Output\{filename}.bmp");
+
+                var myImageCodecInfo = GetEncoderInfo("image/jpeg");
+                var myEncoder = Encoder.Quality;
+                var myEncoderParameters = new EncoderParameters(1);
+                var myEncoderParameter = new EncoderParameter(myEncoder, 100L);
+                myEncoderParameters.Param[0] = myEncoderParameter;
+                bmp.Save($@"..\..\..\Output\{ filename}.jpg", myImageCodecInfo, myEncoderParameters);
+
+                //bmp.Save($@"..\..\..\Output\{filename}.bmp");
             }
         }
 
+        private static ImageCodecInfo GetEncoderInfo(String mimeType)
+        {
+            int j;
+            var encoders = ImageCodecInfo.GetImageEncoders();
+            for (j = 0; j < encoders.Length; ++j)
+            {
+                if (encoders[j].MimeType == mimeType)
+                    return encoders[j];
+            }
+            return null;
+        }
+
+        // TODO: Code copy in  Scene
         private static double Clamp(double lo, double hi, double value)
         {
             return Math.Max(lo, Math.Min(hi, value));
