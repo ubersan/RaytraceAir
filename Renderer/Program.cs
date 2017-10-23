@@ -16,7 +16,7 @@ namespace Renderer
             sw.Start();
 
             //RenderSingleFrame();
-            RenderAnimationFrames(numSteps: 150);
+            RenderAnimationFrames(numSteps: 10);
 
             sw.Stop();
 
@@ -51,7 +51,7 @@ namespace Renderer
                 });
 
             scene.Render();
-            BitmapExporter.Export(camera, "bmp");
+            BitmapExporter.Export(camera, "render");
         }
 
         private static void RenderAnimationFrames(int numSteps)

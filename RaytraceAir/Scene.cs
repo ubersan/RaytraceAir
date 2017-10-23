@@ -98,14 +98,15 @@ namespace RaytraceAir
 
         private Vector3 GetReflectionDir(Vector3 viewDir, Vector3 normal)
         {
-            return viewDir - 2 * Vector3.Dot(viewDir, normal) * normal;
+            return viewDir - 2f * Vector3.Dot(viewDir, normal) * normal;
         }
 
         private Vector3 GetRefractionDir(Vector3 viewDir, Vector3 normal, float ior)
         {
             var cosi = Clamp(-1, 1, Vector3.Dot(viewDir, normal));
             float etai = 1, etat = ior;
-            var n = normal;
+
+            Vector3 n;
             if (cosi < 0)
             {
                 cosi = -cosi;
@@ -117,6 +118,7 @@ namespace RaytraceAir
                 etat = t;
                 n = -normal;
             }
+
             var eta = etai / etat;
             var k = 1 - eta * eta * (1 - cosi * cosi);
             return k < 0 ? Vector3.Zero : eta * viewDir + (eta * cosi - (float)Math.Sqrt(k)) * n;
@@ -126,12 +128,14 @@ namespace RaytraceAir
         {
             var cosi = Clamp(-1, 1, Vector3.Dot(viewDir, normal));
             float etai = 1, etat = ior;
+
             if (cosi > 0)
             {
                 var t = etai;
                 etai = etat;
                 etat = t;
             }
+
             var sint = etai / etat * (float)Math.Sqrt(Math.Max(0, 1 - cosi * cosi));
             if (sint >= 1)
             {
@@ -140,10 +144,10 @@ namespace RaytraceAir
 
             var cost = (float)Math.Sqrt(Math.Max(0, 1 - sint * sint));
             cosi = Math.Abs(cosi);
-            var Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
-            var Rp = ((etai  * cosi) - (etat  * cost)) / ((etai * cosi) + (etat *  cost));
+            var rs = (etat * cosi - etai * cost) / (etat * cosi + etai * cost);
+            var rp = (etai  * cosi - etat  * cost) / (etai * cosi + etat *  cost);
 
-            return (Rs * Rs + Rp * Rp) / 2;
+            return (rs * rs + rp * rp) / 2;
         }
 
         private static float Clamp(float lo, float hi, float value)
