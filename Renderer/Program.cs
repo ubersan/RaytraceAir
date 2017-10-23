@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RaytraceAir;
 
 namespace Renderer
@@ -9,10 +8,10 @@ namespace Renderer
         static void Main()
         {
             var camera = new Camera(
-                position: new Vec3(0, 0, 0),
-                upDirection: new Vec3(0, 1, 0).Normalized(),
-                viewDirection: new Vec3(0, 0, -1).Normalized(),
-                horizontalFoV: 60,
+                position: new Vec3(0, 3, 10),
+                upDirection: new Vec3(0, 10, -1.8).Normalized(),
+                viewDirection: new Vec3(0, -1.8, -10).Normalized(),
+                horizontalFoV: 30,
                 widthInPixel: 1980,
                 heightInPixel: 1260);
 
