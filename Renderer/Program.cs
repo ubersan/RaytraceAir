@@ -8,15 +8,15 @@ using Plane = RaytraceAir.Plane;
 
 namespace Renderer
 {
-    class Program
+    internal static class Program
     {
-        static void Main()
+        private static void Main()
         {
             var sw = new Stopwatch();
             sw.Start();
 
-            //RenderSingleFrame();
-            RenderAnimationFrames(numSteps: 10);
+            RenderSingleFrame();
+            //RenderAnimationFrames(numSteps: 1);
 
             sw.Stop();
 
@@ -51,12 +51,12 @@ namespace Renderer
                 });
 
             scene.Render();
-            BitmapExporter.Export(camera, "render");
+            BitmapExporter.Export(camera, @"..\..\..\..\Output\render.jpg");
         }
 
         private static void RenderAnimationFrames(int numSteps)
         {
-            var folder = Directory.CreateDirectory($@"..\..\..\Output\{Guid.NewGuid().ToString()}");
+            var folder = Directory.CreateDirectory($@"..\..\..\..\Output\{Guid.NewGuid().ToString()}");
 
             var start = new Vector3(-5, 5, -8);
             var end = new Vector3(5, 5, -8);
@@ -89,7 +89,7 @@ namespace Renderer
                     });
 
                 scene.Render();
-                BitmapExporter.Export(camera, $@"{folder}\frame_{PrependWithZerosIfNeeded(i.ToString(), 4)}");
+                BitmapExporter.Export(camera, $@"{folder.FullName}\frame_{PrependWithZerosIfNeeded(i.ToString(), 4)}.jpg");
                 Console.WriteLine($"Rendered frame {i}");
             }
         }

@@ -4,6 +4,6 @@
     {
         Diffuse,
         Mirror,
-        Transparent
+        Transparent,
     }
 }

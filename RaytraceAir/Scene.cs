@@ -61,8 +61,7 @@ namespace RaytraceAir
                         var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
                         color += 0.8f * CastRay(originShadowRay, reflectionDir, ++depth);
                     }
-
-                    if (hitSceneObject.Material == Material.Transparent && isIlluminated > 0)
+                    else if (hitSceneObject.Material == Material.Transparent && isIlluminated > 0)
                     {
                         var hitNormal = hitSceneObject.Normal(hitPoint);
                         var kr = Fresnel(dir, hitNormal, 1.5f);
