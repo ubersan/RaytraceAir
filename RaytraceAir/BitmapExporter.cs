@@ -12,7 +12,7 @@ namespace RaytraceAir
             using (var bmp = new Bitmap(camera.WidthInPixel, camera.HeightInPixel, PixelFormat.Format24bppRgb))
             {
                 var data = bmp.LockBits(
-                    new Rectangle(0, 0, bmp.Width, bmp.Height),
+                    new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
                     ImageLockMode.WriteOnly,
                     bmp.PixelFormat);
 

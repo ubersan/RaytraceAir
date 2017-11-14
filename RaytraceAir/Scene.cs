@@ -22,8 +22,14 @@ namespace RaytraceAir
         {
             foreach (var pixel in GetPixel())
             {
+                if (pixel.I == 763 && pixel.J == 706)
+                {
+                    var i = 313;
+                }
+
                 var originPrimaryRay = _camera.Position;
-                var dir = Vector3.Normalize(_camera.ViewDirection + pixel.X * _camera.RightDirection + pixel.Y * _camera.UpDirection);
+                var dir = Vector3.Normalize(_camera.ViewDirection + pixel.X * _camera.RightDirection +
+                                            pixel.Y * _camera.UpDirection);
 
                 _camera.Pixels[pixel.I, pixel.J] = CastRay(originPrimaryRay, dir, 0);
             }
@@ -44,13 +50,11 @@ namespace RaytraceAir
 
                 foreach (var light in _lights)
                 {
-                    var lightDist = light.GetDistToLight(hitPoint);
-                    var lightDir = light.GetDirToLight(hitPoint);
-
+                    (var lightDir, var lightDist) = light.GetRay(hitPoint);
                     var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
 
                     var contribution = Vector3.Dot(lightDir, hitSceneObject.Normal(hitPoint));
-                    contribution *= 4000 * hitSceneObject.Albedo / (float)Math.PI;
+                    contribution *= 4000 * hitSceneObject.Albedo / (float) Math.PI;
                     contribution /= light.GetFalloff(lightDist);
 
                     // TODO: BRDF und MIRROR
@@ -92,7 +96,7 @@ namespace RaytraceAir
 
         private float deg2rad(float deg)
         {
-            return deg * (float)Math.PI / 180;
+            return deg * (float) Math.PI / 180;
         }
 
         private Vector3 GetReflectionDir(Vector3 viewDir, Vector3 normal)
@@ -120,7 +124,7 @@ namespace RaytraceAir
 
             var eta = etai / etat;
             var k = 1 - eta * eta * (1 - cosi * cosi);
-            return k < 0 ? Vector3.Zero : eta * viewDir + (eta * cosi - (float)Math.Sqrt(k)) * n;
+            return k < 0 ? Vector3.Zero : eta * viewDir + (eta * cosi - (float) Math.Sqrt(k)) * n;
         }
 
         private float Fresnel(Vector3 viewDir, Vector3 normal, float ior)
@@ -135,16 +139,16 @@ namespace RaytraceAir
                 etat = t;
             }
 
-            var sint = etai / etat * (float)Math.Sqrt(Math.Max(0, 1 - cosi * cosi));
+            var sint = etai / etat * (float) Math.Sqrt(Math.Max(0, 1 - cosi * cosi));
             if (sint >= 1)
             {
                 return 1;
             }
 
-            var cost = (float)Math.Sqrt(Math.Max(0, 1 - sint * sint));
+            var cost = (float) Math.Sqrt(Math.Max(0, 1 - sint * sint));
             cosi = Math.Abs(cosi);
             var rs = (etat * cosi - etai * cost) / (etat * cosi + etai * cost);
-            var rp = (etai  * cosi - etat  * cost) / (etai * cosi + etat *  cost);
+            var rp = (etai * cosi - etat * cost) / (etai * cosi + etat * cost);
 
             return (rs * rs + rp * rp) / 2;
         }
@@ -190,7 +194,7 @@ namespace RaytraceAir
 
         private IEnumerable<Pixel> GetPixel()
         {
-            var scale = (float)Math.Tan(deg2rad(_camera.HorizontalFoV * 0.5f));
+            var scale = (float) Math.Tan(deg2rad(_camera.HorizontalFoV * 0.5f));
             var aspectRatio = _camera.WidthInPixel / (float) _camera.HeightInPixel;
             for (var j = 0; j < _camera.HeightInPixel; ++j)
             {

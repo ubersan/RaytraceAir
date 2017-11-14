@@ -18,14 +18,10 @@ namespace RaytraceAir
             return 4f * (float)Math.PI * distance * distance;
         }
 
-        public override float GetDistToLight(Vector3 hitPoint)
+        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
         {
-            return (_position - hitPoint).Length();
-        }
-
-        public override Vector3 GetDirToLight(Vector3 hitPoint)
-        {
-            return Vector3.Normalize(_position - hitPoint);
+            var dir = _position - hitPoint;
+            return (Vector3.Normalize(dir), dir.Length());
         }
     }
 }

@@ -12,7 +12,6 @@ namespace RaytraceAir
         public Vector3 Color { get; }
 
         public abstract float GetFalloff(float distance);
-        public abstract float GetDistToLight(Vector3 hitPoint);
-        public abstract Vector3 GetDirToLight(Vector3 hitPoint);
+        public abstract (Vector3 direction, float distance) GetRay(Vector3 hitPoint);
     }
 }

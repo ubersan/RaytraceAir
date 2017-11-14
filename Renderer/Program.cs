@@ -40,14 +40,16 @@ namespace Renderer
                 {
                     new Sphere(new Vector3(-4, 0, -10), 0.75f, new Vector3(1, 0, 0)),
                     new Sphere(new Vector3(-2, 0, -10), 0.75f, new Vector3(1, 1, 0)),
-                    new Sphere(new Vector3(-0, 0, -10), 0.75f, new Vector3(0, 1, 0)),
+                    new Sphere(new Vector3(0, 0, -10), 0.75f, new Vector3(0, 1, 0)),
                     new Sphere(new Vector3(2, 0, -10), 0.75f, new Vector3(0, 1, 1)),
                     new Sphere(new Vector3(4, 0, -10), 0.75f, new Vector3(0, 0, 1)),
-                    new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1))
+                    new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1)),
+                    new Rectangle(new Vector3(0, 1, -11), 9.5f, 1.5f, Vector3.Normalize(new Vector3(0, -0.3f, 1f)), Vector3.UnitX, new Vector3(0.8f, 0.4f, 0.3f), Material.Mirror)
                 },
                 new List<Light>
                 {
                     new PointLight(new Vector3(0, 5, -8), new Vector3(1, 1, 1)),
+                    //new SphericalLight(new Vector3(0, 5, -8), 0.5f, new Vector3(1, 1, 1)),
                 });
 
             scene.Render();

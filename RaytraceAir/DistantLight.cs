@@ -17,14 +17,9 @@ namespace RaytraceAir
             return 1;
         }
 
-        public override float GetDistToLight(Vector3 hitPoint)
+        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
         {
-            return float.MaxValue;
-        }
-
-        public override Vector3 GetDirToLight(Vector3 hitPoint)
-        {
-            return -_direction;
+            return (_direction, float.MaxValue);
         }
     }
 }
