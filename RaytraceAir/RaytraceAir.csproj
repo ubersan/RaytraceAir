@@ -73,6 +73,7 @@
     <Compile Include="PointLight.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rectangle.cs" />
+    <Compile Include="RectangularLight.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneObject.cs" />
     <Compile Include="Sphere.cs" />

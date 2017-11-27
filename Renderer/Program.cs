@@ -48,7 +48,8 @@ namespace Renderer
                 },
                 new List<Light>
                 {
-                    new PointLight(new Vector3(0, 5, -8), new Vector3(1, 1, 1)),
+                    //new PointLight(new Vector3(0, 5, -8), new Vector3(1, 1, 1)),
+                    new RectangularLight(new Vector3(1, 1, 1), new Vector3(0, 5, -10), 10f, 1f, -Vector3.UnitY, Vector3.UnitX)
                     //new SphericalLight(new Vector3(0, 5, -8), 0.5f, new Vector3(1, 1, 1)),
                 });
 
