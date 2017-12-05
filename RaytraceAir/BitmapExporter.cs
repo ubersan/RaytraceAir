@@ -38,9 +38,8 @@ namespace RaytraceAir
                 var myEncoderParameters = new EncoderParameters(1);
                 var myEncoderParameter = new EncoderParameter(myEncoder, 100L);
                 myEncoderParameters.Param[0] = myEncoderParameter;
+                
                 bmp.Save(filename, myImageCodecInfo, myEncoderParameters);
-
-                //bmp.Save($@"..\..\..\Output\{filename}.bmp");
             }
         }
 

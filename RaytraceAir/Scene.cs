@@ -7,34 +7,32 @@ namespace RaytraceAir
 {
     public class Scene
     {
-        private readonly Camera _camera;
         private readonly List<SceneObject> _sceneObjects;
         private readonly List<Light> _lights;
         private readonly Vector3 _background = new Vector3(0.8f, 0.2f, 0.3f);
-        private const int LIGHT_SAMPLES = 100;
+        private const int LIGHT_SAMPLES = 50;
 
         public Scene(Camera camera, List<SceneObject> sceneObjects, List<Light> lights)
         {
-            _camera = camera;
+            Camera = camera;
             _sceneObjects = sceneObjects;
             _lights = lights;
         }
 
+        public Camera Camera { get; }
+
         public void Render()
         {
-            //foreach (var pixel in GetPixel())
-            Parallel.ForEach(GetPixel(), pixel =>
-            {
-                if (pixel.I == 508 && pixel.J == 461)
+            foreach (var pixel in GetPixel())
+               // Parallel.ForEach(GetPixel(), pixel =>
                 {
-                    var i = 313;
-                }
-                var originPrimaryRay = _camera.Position;
-                var dir = Vector3.Normalize(_camera.ViewDirection + pixel.X * _camera.RightDirection +
-                                            pixel.Y * _camera.UpDirection);
+                    var originPrimaryRay = Camera.Position;
+                    var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection + pixel.Y * Camera.UpDirection);
 
-                _camera.Pixels[pixel.I, pixel.J] = CastRay(originPrimaryRay, dir, depth: 0);
-            });
+                    var color = CastRay(originPrimaryRay, dir, depth: 0);
+                    Camera.Pixels[pixel.I, pixel.J] = color;
+                }
+           // });
         }
 
         private Vector3 CastRay(Vector3 origin, Vector3 dir, int depth)
@@ -66,8 +64,7 @@ namespace RaytraceAir
 
                         if (hitSceneObject.Material == Material.Mirror && isIlluminated > 0)
                         {
-                            var reflectionDir =
-                                Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
+                            var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
                             color += 0.8f * CastRay(originShadowRay, reflectionDir, ++depth);
                         }
                         else if (hitSceneObject.Material == Material.Transparent && isIlluminated > 0)
@@ -202,19 +199,19 @@ namespace RaytraceAir
 
         private IEnumerable<Pixel> GetPixel()
         {
-            var scale = (float) Math.Tan(deg2rad(_camera.HorizontalFoV * 0.5f));
-            var aspectRatio = _camera.WidthInPixel / (float) _camera.HeightInPixel;
-            for (var j = 0; j < _camera.HeightInPixel; ++j)
+            var scale = (float) Math.Tan(deg2rad(Camera.HorizontalFoV * 0.5f));
+            var aspectRatio = Camera.WidthInPixel / (float) Camera.HeightInPixel;
+            for (var j = 0; j < Camera.HeightInPixel; ++j)
             {
-                for (var i = 0; i < _camera.WidthInPixel; ++i)
+                for (var i = 0; i < Camera.WidthInPixel; ++i)
                 {
-                    var x = (2 * (i + 0.5f) / _camera.WidthInPixel - 1) * scale;
-                    var y = (1 - 2 * (j + 0.5f) / _camera.HeightInPixel) * scale * 1 / aspectRatio;
+                    var x = (2 * (i + 0.5f) / Camera.WidthInPixel - 1) * scale;
+                    var y = (1 - 2 * (j + 0.5f) / Camera.HeightInPixel) * scale * 1 / aspectRatio;
 
-                    yield return new Pixel {X = x, Y = y, I = i, J = j};
+                    yield return new Pixel { X = x, Y = y, I = i, J = j };
                 }
             }
-        }
+        } 
     }
 
     public struct Pixel

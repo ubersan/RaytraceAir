@@ -78,6 +78,7 @@
     <Compile Include="SceneObject.cs" />
     <Compile Include="Sphere.cs" />
     <Compile Include="SphericalLight.cs" />
+    <Compile Include="TestScenes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -13,6 +13,8 @@ namespace RaytraceAir
         private readonly float _halfHeight;
         private readonly Vector3 _heightAxis;
 
+        private readonly Random _random;
+
         public RectangularLight(Vector3 color, Vector3 center, float width, float height, Vector3 normal, Vector3 widthAxis)
             : base(color)
         {
@@ -22,6 +24,7 @@ namespace RaytraceAir
             _halfWidth = width / 2f;
             _halfHeight = height / 2f;
             _heightAxis = Vector3.Cross(normal, widthAxis);
+            _random = new Random();
         }
 
         public override float GetFalloff(float distance)
@@ -32,9 +35,8 @@ namespace RaytraceAir
         public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
         {
             // sample random point in rectangle
-            var random = new Random();
-            var widthSample = ((float)random.NextDouble() - 0.5f) * _halfWidth;
-            var heightSample = ((float)random.NextDouble() - 0.5f) * _halfWidth;
+            var widthSample = ((float)_random.NextDouble() - 0.5f) * _halfWidth;
+            var heightSample = ((float)_random.NextDouble() - 0.5f) * _halfHeight;
 
             var samplePoint = _center + _widthAxis * widthSample + _heightAxis * heightSample;
             var direction = samplePoint - hitPoint;
