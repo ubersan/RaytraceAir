@@ -10,7 +10,7 @@ namespace RaytraceAir
         private readonly List<SceneObject> _sceneObjects;
         private readonly List<Light> _lights;
         private readonly Vector3 _background = new Vector3(0.8f, 0.2f, 0.3f);
-        private const int LIGHT_SAMPLES = 50;
+        private const int LIGHT_SAMPLES = 5;
 
         public Scene(Camera camera, List<SceneObject> sceneObjects, List<Light> lights)
         {

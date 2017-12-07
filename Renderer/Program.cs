@@ -16,7 +16,7 @@ namespace Renderer
             sw.Start();
 
             RenderSingleFrame();
-            //RenderAnimationFrames(numSteps: 1);
+            //RenderAnimationFrames(numSteps: 3);
 
             sw.Stop();
 
@@ -26,19 +26,19 @@ namespace Renderer
 
         private static void RenderSingleFrame()
         {
-            var scene = TestScenes.FloorWithRectangularLight();
+            var scene = TestScenes.ColorBoxScene();
 
             scene.Render();
-            BitmapExporter.Export(scene.Camera, @"..\..\..\..\Output\render.jpg");
+            BitmapExporter.Export(scene.Camera, AppEnvironment.OutputFolder, "render.jpg");
         }
 
         private static void RenderAnimationFrames(int numSteps)
         {
-            var folder = Directory.CreateDirectory($@"..\..\..\..\Output\{Guid.NewGuid().ToString()}");
-
             var start = new Vector3(-5, 5, -8);
             var end = new Vector3(5, 5, -8);
             var step = (end - start) / numSteps;
+
+            var targetFolder = Path.Combine(AppEnvironment.OutputFolder, $"{ Guid.NewGuid() }");
 
             for (var i = 0; i < numSteps; ++i)
             {
@@ -67,7 +67,8 @@ namespace Renderer
                     });
 
                 scene.Render();
-                BitmapExporter.Export(camera, $@"{folder.FullName}\frame_{PrependWithZerosIfNeeded(i.ToString(), 4)}.jpg");
+                BitmapExporter.Export(camera, targetFolder, $@"frame_{PrependWithZerosIfNeeded(i.ToString(), 4)}.jpg");
+
                 Console.WriteLine($"Rendered frame {i}");
             }
         }

@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppEnvironment.cs" />
     <Compile Include="BitmapExporter.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="DistantLight.cs" />

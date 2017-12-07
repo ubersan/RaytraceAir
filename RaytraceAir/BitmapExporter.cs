@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace RaytraceAir
 {
     public static class BitmapExporter
     {
-        public static void Export(Camera camera, string filename)
+        public static void Export(Camera camera, string targetFolder, string filename)
         {
             using (var bmp = new Bitmap(camera.WidthInPixel, camera.HeightInPixel, PixelFormat.Format24bppRgb))
             {
@@ -38,8 +39,10 @@ namespace RaytraceAir
                 var myEncoderParameters = new EncoderParameters(1);
                 var myEncoderParameter = new EncoderParameter(myEncoder, 100L);
                 myEncoderParameters.Param[0] = myEncoderParameter;
-                
-                bmp.Save(filename, myImageCodecInfo, myEncoderParameters);
+
+                Directory.CreateDirectory(targetFolder);
+                var combine = Path.Combine(targetFolder, filename);
+                bmp.Save(combine, myImageCodecInfo, myEncoderParameters);
             }
         }
 
