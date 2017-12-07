@@ -23,5 +23,21 @@ namespace RaytraceAir
             var dir = _position - hitPoint;
             return (Vector3.Normalize(dir), dir.Length());
         }
+
+        public override float EmitsLightInto(Vector3 lightDir)
+        {
+            return 1f;
+        }
+
+        public override bool Intersects(Vector3 origin, Vector3 direction, out float t)
+        {
+            t = 0;
+            return false;
+        }
+
+        public override Vector3 Normal(Vector3 p)
+        {
+            return Vector3.Zero;
+        }
     }
 }

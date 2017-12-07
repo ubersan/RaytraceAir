@@ -26,7 +26,7 @@ namespace Renderer
 
         private static void RenderSingleFrame()
         {
-            var scene = TestScenes.ColorBoxScene();
+            var scene = TestScenes.CornellBox();
 
             scene.Render();
             BitmapExporter.Export(scene.Camera, AppEnvironment.OutputFolder, "render.jpg");

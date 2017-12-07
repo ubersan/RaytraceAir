@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Numerics;
 
 namespace RaytraceAir
@@ -42,6 +41,43 @@ namespace RaytraceAir
             var direction = samplePoint - hitPoint;
 
             return (Vector3.Normalize(direction), direction.Length());
+        }
+
+        public override float EmitsLightInto(Vector3 lightDir)
+        {
+            return Vector3.Dot(_normal, -lightDir) < 0 ? 0f : 1f;
+        }
+
+        public override bool Intersects(Vector3 origin, Vector3 direction, out float t)
+        {
+            // TODO: Code copied from Rectangle
+            var denominator = Vector3.Dot(_normal, direction);
+            t = 0;
+            if (Math.Abs(denominator) > 1e-14)
+            {
+                t = Vector3.Dot(_center - origin, _normal) / denominator;
+            }
+
+            if (t >= 0)
+            {
+                var intersection = origin + t * direction;
+                var inPlaneOffset = intersection - _center;
+
+                var effWidht = Math.Abs(Vector3.Dot(inPlaneOffset, _widthAxis));
+                var effHeight = Math.Abs(Vector3.Dot(inPlaneOffset, _heightAxis));
+
+                var widhtOk = effWidht <= _halfWidth;
+                var heightOk = effHeight <= _halfHeight;
+
+                return widhtOk && heightOk;
+            }
+
+            return false;
+        }
+
+        public override Vector3 Normal(Vector3 p)
+        {
+            return _normal;
         }
     }
 }

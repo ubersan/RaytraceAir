@@ -66,7 +66,7 @@ namespace RaytraceAir
             return scene;
         }
 
-        public static Scene ColorBoxScene()
+        public static Scene CornellBox()
         {
             var camera = GetStraigthCamera();
 
@@ -77,13 +77,14 @@ namespace RaytraceAir
                 {
                     new Plane(pointOnPlane: new Vector3(0, -d, 0), normal: new Vector3(0, 1, 0), color: new Vector3(1, 1, 1)),
                     new Plane(pointOnPlane: new Vector3(0, d, 0), normal: new Vector3(0, -1, 0), color: new Vector3(1, 1, 1)),
-                    new Plane(pointOnPlane: new Vector3(-d, 0, 0), normal: new Vector3(1, 0, 0), color: new Vector3(1, 1, 1)),
-                    new Plane(pointOnPlane: new Vector3(d, 0, 0), normal: new Vector3(-1, 0, 0), color: new Vector3(1, 1, 1)),
+                    new Plane(pointOnPlane: new Vector3(-d, 0, 0), normal: new Vector3(1, 0, 0), color: new Vector3(0, 0, 1)),
+                    new Plane(pointOnPlane: new Vector3(d, 0, 0), normal: new Vector3(-1, 0, 0), color: new Vector3(0, 1, 0)),
                     new Plane(pointOnPlane: new Vector3(0, 0, -d), normal: new Vector3(0, 0, 1), color: new Vector3(1, 1, 1)),
+                    new Sphere(center: new Vector3(-1f, -2f, 0), radius: 2f,  color: Vector3.One),
                 },
                 new List<Light>
                 {
-                    new RectangularLight(color: Vector3.One, center: new Vector3(0, d - 1e-2f, 0), width: 0.25f, height: 0.25f, normal: new Vector3(0, 0, -1), widthAxis: new Vector3(1, 0, 0))
+                    new RectangularLight(color: Vector3.One, center: new Vector3(0, d - 1e-2f, 0), width: 0.1f, height: 0.1f, normal: new Vector3(0, -1, 0), widthAxis: new Vector3(1, 0, 0))
                 });
 
             return scene;

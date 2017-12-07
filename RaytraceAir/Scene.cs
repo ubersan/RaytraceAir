@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace RaytraceAir
         private readonly List<SceneObject> _sceneObjects;
         private readonly List<Light> _lights;
         private readonly Vector3 _background = new Vector3(0.8f, 0.2f, 0.3f);
-        private const int LIGHT_SAMPLES = 5;
+        private const int LIGHT_SAMPLES = 25;
 
         public Scene(Camera camera, List<SceneObject> sceneObjects, List<Light> lights)
         {
@@ -21,11 +22,17 @@ namespace RaytraceAir
 
         public Camera Camera { get; }
 
+        private IEnumerable<SceneObject> SceneObjectsWithLights => _sceneObjects.Concat(_lights);
+
         public void Render()
         {
             foreach (var pixel in GetPixel())
                // Parallel.ForEach(GetPixel(), pixel =>
                 {
+                    if (pixel.I == 895 && pixel.J == 138)
+                    {
+                        var i = 313;
+                    }
                     var originPrimaryRay = Camera.Position;
                     var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection + pixel.Y * Camera.UpDirection);
 
@@ -46,49 +53,58 @@ namespace RaytraceAir
 
             if (Trace(origin, dir, out var hitSceneObject, out var hitPoint))
             {
-                var originShadowRay = hitPoint + hitSceneObject.Normal(hitPoint) * 1e-4f;
-
-                foreach (var light in _lights)
+                if (hitSceneObject.Material == Material.Light)
                 {
-                    // TODO: Works only for 1 light
-                    for (var i = 0; i < LIGHT_SAMPLES; ++i)
+                    color = hitSceneObject.Color;
+                }
+                else
+                {
+                    var originShadowRay = hitPoint + hitSceneObject.Normal(hitPoint) * 1e-4f;
+
+                    foreach (var light in _lights)
                     {
-                        (var lightDir, var lightDist) = light.GetRay(hitPoint);
-                        var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
-
-                        var contribution = Vector3.Dot(lightDir, hitSceneObject.Normal(hitPoint));
-                        contribution *= 4000 * hitSceneObject.Albedo / (float) Math.PI;
-                        contribution /= light.GetFalloff(lightDist);
-
-                        color += isIlluminated * hitSceneObject.Color * light.Color * Math.Max(0, contribution);
-
-                        if (hitSceneObject.Material == Material.Mirror && isIlluminated > 0)
+                        // TODO: Works only for 1 light
+                        for (var i = 0; i < LIGHT_SAMPLES; ++i)
                         {
-                            var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
-                            color += 0.8f * CastRay(originShadowRay, reflectionDir, ++depth);
-                        }
-                        else if (hitSceneObject.Material == Material.Transparent && isIlluminated > 0)
-                        {
-                            var hitNormal = hitSceneObject.Normal(hitPoint);
-                            var kr = Fresnel(dir, hitNormal, 1.5f);
-                            var outside = Vector3.Dot(dir, hitNormal) < 0;
-                            var bias = 1e-4f * hitNormal;
-                            var refractionColor = Vector3.Zero;
-                            if (kr < 1)
+                            (var lightDir, var lightDist) = light.GetRay(hitPoint);
+                            var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
+                            isIlluminated *= light.EmitsLightInto(lightDir);
+
+                            var contribution = Vector3.Dot(lightDir, hitSceneObject.Normal(hitPoint));
+                            contribution *= 4000 * hitSceneObject.Albedo / (float) Math.PI;
+                            contribution /= light.GetFalloff(lightDist);
+
+                            color += isIlluminated * hitSceneObject.Color * light.Color * Math.Max(0, contribution);
+
+                            if (hitSceneObject.Material == Material.Mirror && isIlluminated > 0)
                             {
-                                var refractionDir = Vector3.Normalize(GetRefractionDir(dir, hitNormal, 1.5f));
-                                var refractionorig = outside ? hitPoint - bias : hitPoint + bias;
-                                refractionColor = CastRay(refractionorig, refractionDir, ++depth);
+                                var reflectionDir =
+                                    Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
+                                color += 0.8f * CastRay(originShadowRay, reflectionDir, ++depth);
                             }
-                            var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitNormal));
-                            var reflectionOrig = outside ? hitPoint + bias : hitPoint - bias;
-                            var reflectionColor = CastRay(reflectionOrig, reflectionDir, ++depth);
+                            else if (hitSceneObject.Material == Material.Transparent && isIlluminated > 0)
+                            {
+                                var hitNormal = hitSceneObject.Normal(hitPoint);
+                                var kr = Fresnel(dir, hitNormal, 1.5f);
+                                var outside = Vector3.Dot(dir, hitNormal) < 0;
+                                var bias = 1e-4f * hitNormal;
+                                var refractionColor = Vector3.Zero;
+                                if (kr < 1)
+                                {
+                                    var refractionDir = Vector3.Normalize(GetRefractionDir(dir, hitNormal, 1.5f));
+                                    var refractionorig = outside ? hitPoint - bias : hitPoint + bias;
+                                    refractionColor = CastRay(refractionorig, refractionDir, ++depth);
+                                }
+                                var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitNormal));
+                                var reflectionOrig = outside ? hitPoint + bias : hitPoint - bias;
+                                var reflectionColor = CastRay(reflectionOrig, reflectionDir, ++depth);
 
-                            color += reflectionColor * kr + refractionColor * (1 - kr);
+                                color += reflectionColor * kr + refractionColor * (1 - kr);
+                            }
                         }
-                    }
 
-                    color /= LIGHT_SAMPLES;
+                        color /= LIGHT_SAMPLES;
+                    }
                 }
             }
             else
@@ -169,7 +185,7 @@ namespace RaytraceAir
             hitPoint = Vector3.Zero;
 
             var closestT = double.MaxValue;
-            foreach (var sceneObject in _sceneObjects)
+            foreach (var sceneObject in SceneObjectsWithLights)
             {
                 if (sceneObject.Intersects(origin, dir, out var t) && t < closestT)
                 {
@@ -184,17 +200,17 @@ namespace RaytraceAir
 
         private float TraceShadow(Vector3 origin, Vector3 dir, float distToLight)
         {
-            SceneObject shadowSphere = null;
+            SceneObject shadowingSceneObject = null;
             foreach (var sceneObject in _sceneObjects)
             {
                 if (sceneObject.Intersects(origin, dir, out var t) && t < distToLight)
                 {
-                    shadowSphere = sceneObject;
+                    shadowingSceneObject = sceneObject;
                     break;
                 }
             }
 
-            return shadowSphere != null ? 0f : 1f;
+            return shadowingSceneObject != null ? 0f : 1f;
         }
 
         private IEnumerable<Pixel> GetPixel()

@@ -5,5 +5,6 @@
         Diffuse,
         Mirror,
         Transparent,
+        Light,
     }
 }
