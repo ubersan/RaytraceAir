@@ -11,35 +11,37 @@ namespace RaytraceAir
         private readonly List<SceneObject> _sceneObjects;
         private readonly List<Light> _lights;
         private readonly Vector3 _background = new Vector3(0.8f, 0.2f, 0.3f);
-        private const int LIGHT_SAMPLES = 25;
+        private const int LIGHT_SAMPLES = 5;
 
         public Scene(Camera camera, List<SceneObject> sceneObjects, List<Light> lights)
         {
             Camera = camera;
             _sceneObjects = sceneObjects;
             _lights = lights;
+            ProgressMonitor = new ProgressMonitor(Camera.NumberOfPixels);
         }
 
         public Camera Camera { get; }
+
+        public ProgressMonitor ProgressMonitor { get; }
 
         private IEnumerable<SceneObject> SceneObjectsWithLights => _sceneObjects.Concat(_lights);
 
         public void Render()
         {
             foreach (var pixel in GetPixel())
-               // Parallel.ForEach(GetPixel(), pixel =>
-                {
-                    if (pixel.I == 895 && pixel.J == 138)
-                    {
-                        var i = 313;
-                    }
-                    var originPrimaryRay = Camera.Position;
-                    var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection + pixel.Y * Camera.UpDirection);
+                //   Parallel.ForEach(GetPixel(), pixel =>
+            {
+                var originPrimaryRay = Camera.Position;
+                var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection +
+                                            pixel.Y * Camera.UpDirection);
 
-                    var color = CastRay(originPrimaryRay, dir, depth: 0);
-                    Camera.Pixels[pixel.I, pixel.J] = color;
-                }
-           // });
+                var color = CastRay(originPrimaryRay, dir, depth: 0);
+                Camera.Pixels[pixel.I, pixel.J] = color;
+
+                ProgressMonitor.Advance();
+            }
+            //});
         }
 
         private Vector3 CastRay(Vector3 origin, Vector3 dir, int depth)
@@ -224,10 +226,10 @@ namespace RaytraceAir
                     var x = (2 * (i + 0.5f) / Camera.WidthInPixel - 1) * scale;
                     var y = (1 - 2 * (j + 0.5f) / Camera.HeightInPixel) * scale * 1 / aspectRatio;
 
-                    yield return new Pixel { X = x, Y = y, I = i, J = j };
+                    yield return new Pixel {X = x, Y = y, I = i, J = j};
                 }
             }
-        } 
+        }
     }
 
     public struct Pixel

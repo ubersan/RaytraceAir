@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using System.Threading;
+using System.Threading.Tasks;
 using RaytraceAir;
 using Plane = RaytraceAir.Plane;
 
@@ -28,9 +30,19 @@ namespace Renderer
         {
             var scene = TestScenes.CornellBox();
 
-            scene.Render();
+            var renderTask = Task.Factory.StartNew(() => scene.Render());
+
+            while (!renderTask.IsCompleted)
+            {
+                Console.Write(ProgressString(scene));
+                Thread.Sleep(50);
+            }
+            Console.WriteLine(ProgressString(scene));
+
             BitmapExporter.Export(scene.Camera, AppEnvironment.OutputFolder, "render.jpg");
         }
+
+        private static string ProgressString(Scene scene) => $"\rProgress: {scene.ProgressMonitor.PrintPercentage()}";
 
         private static void RenderAnimationFrames(int numSteps)
         {

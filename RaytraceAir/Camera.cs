@@ -32,5 +32,7 @@ namespace RaytraceAir
         public int WidthInPixel { get; }
         public int HeightInPixel { get; }
         public Vector3[,] Pixels { get; }
+
+        public int NumberOfPixels => WidthInPixel * HeightInPixel;
     }
 }
