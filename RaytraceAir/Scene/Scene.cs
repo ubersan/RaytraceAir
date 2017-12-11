@@ -10,7 +10,8 @@ namespace RaytraceAir
     {
         private readonly List<SceneObject> _sceneObjects;
         private readonly List<Light> _lights;
-        private readonly Vector3 _background = new Vector3(0.8f, 0.2f, 0.3f);
+        //private readonly Vector3 _background = new Vector3(0.8f, 0.2f, 0.3f);
+        private readonly Vector3 _background = Vector3.Zero;
         private const int LIGHT_SAMPLES = 5;
 
         public Scene(Camera camera, List<SceneObject> sceneObjects, List<Light> lights, string name = "render")
@@ -82,13 +83,13 @@ namespace RaytraceAir
 
                             color += isIlluminated * hitSceneObject.Color * light.Color * Math.Max(0, contribution);
 
-                            if (hitSceneObject.Material == Material.Mirror && isIlluminated > 0)
+                            if (isIlluminated > 0 && hitSceneObject.Material == Material.Mirror)
                             {
                                 var reflectionDir =
                                     Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
                                 color += 0.8f * CastRay(originShadowRay, reflectionDir, ++depth);
                             }
-                            else if (hitSceneObject.Material == Material.Transparent && isIlluminated > 0)
+                            else if (isIlluminated > 0 && hitSceneObject.Material == Material.Transparent)
                             {
                                 var hitNormal = hitSceneObject.Normal(hitPoint);
                                 var kr = Fresnel(dir, hitNormal, 1.5f);
@@ -206,17 +207,15 @@ namespace RaytraceAir
 
         private float TraceShadow(Vector3 origin, Vector3 dir, float distToLight)
         {
-            SceneObject shadowingSceneObject = null;
             foreach (var sceneObject in _sceneObjects)
             {
                 if (sceneObject.Intersects(origin, dir, out var t) && t < distToLight)
                 {
-                    shadowingSceneObject = sceneObject;
-                    break;
+                    return 0f;
                 }
             }
 
-            return shadowingSceneObject != null ? 0f : 1f;
+            return 1f;
         }
 
         private IEnumerable<Pixel> GetPixel()

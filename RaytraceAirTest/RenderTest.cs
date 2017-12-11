@@ -25,43 +25,57 @@ namespace RaytraceAirTest
         [TestMethod]
         public void CornellBox_Render_ResultsMatchReferences()
         {
-            Given_Scene(TestScenes.CornellBox);
+            Given_SceneCornellBox();
             When_RenderAndExportScene();
-            Then_RenderedImageMatchesReferenceWithTolerance(MidMaxAverageError);
+            Then_RenderedImageMatchesReferenceWithMediumTolerance();
         }
 
         [TestMethod]
         public void FloorWithPointLight_Render_ResultsMatchReferences()
         {
-            Given_Scene(TestScenes.FloorWithPointLight);
+            Given_SceneFloorWithPointLight();
             When_RenderAndExportScene();
-            Then_RenderedImageMatchesReferenceWithTolerance(LoMaxAverageError);
+            Then_RenderedImageMatchesReferenceWithLowTolerance();
         }
 
         [TestMethod]
         public void FloorWithRectangularLight_Render_ResultsMatchReferences()
         {
-            Given_Scene(TestScenes.FloorWithRectangularLight);
+            Given_SceneFloorWithRectangularLight();
             When_RenderAndExportScene();
-            Then_RenderedImageMatchesReferenceWithTolerance(HiMaxAverageError);
+            Then_RenderedImageMatchesReferenceWithHighTolerance();
         }
 
         [TestMethod]
         public void SpheresWithMirror_Render_ResultsMatchReferences()
         {
-            Given_Scene(TestScenes.SpheresWithMirror);
+            Given_SceneSpheresWithMirror();
             When_RenderAndExportScene();
-            Then_RenderedImageMatchesReferenceWithTolerance(LoMaxAverageError);
+            Then_RenderedImageMatchesReferenceWithLowTolerance();
         }
 
         #endregion
 
         #region Given, When, Then Methods
 
-        private void Given_Scene(Func<bool, Scene> testScene)
+        private void Given_SceneCornellBox()
         {
-            // true to choose the lowPixel version
-            _scene = testScene(true);
+            Set_Scene(TestScenes.CornellBox);
+        }
+
+        private void Given_SceneFloorWithPointLight()
+        {
+            Set_Scene(TestScenes.FloorWithPointLight);
+        }
+
+        private void Given_SceneFloorWithRectangularLight()
+        {
+            Set_Scene(TestScenes.FloorWithRectangularLight);
+        }
+
+        private void Given_SceneSpheresWithMirror()
+        {
+            Set_Scene(TestScenes.SpheresWithMirror);
         }
 
         private void When_RenderAndExportScene()
@@ -74,7 +88,32 @@ namespace RaytraceAirTest
             _referenceImagePath = Path.Combine(AppEnvironment.TestReferenceFolder, $"{_scene.Name}.jpg");
         }
 
-        private void Then_RenderedImageMatchesReferenceWithTolerance(double maxAverageError)
+        private void Then_RenderedImageMatchesReferenceWithLowTolerance()
+        {
+            Check_RenderedImageMatchesReferenceWithTolerance(LoMaxAverageError);
+        }
+
+        private void Then_RenderedImageMatchesReferenceWithMediumTolerance()
+        {
+            Check_RenderedImageMatchesReferenceWithTolerance(MidMaxAverageError);
+        }
+
+        private void Then_RenderedImageMatchesReferenceWithHighTolerance()
+        {
+            Check_RenderedImageMatchesReferenceWithTolerance(HiMaxAverageError);
+        }
+
+        #endregion
+
+        #region  Helper Methods
+
+        private void Set_Scene(Func<bool, Scene> testScene)
+        {
+            // true to choose the lowPixel version
+            _scene = testScene(true);
+        }
+
+        private void Check_RenderedImageMatchesReferenceWithTolerance(double maxAverageError)
         {
             var actualBytes = GetRgbValuesFrom(_actualImagePath);
             var referenceBytes = GetRgbValuesFrom(_referenceImagePath);
@@ -88,10 +127,6 @@ namespace RaytraceAirTest
             var averageError = sumOfDifferences / (double)actualBytes.Length;
             Assert.IsTrue(averageError <= maxAverageError);
         }
-
-        #endregion
-
-        #region  Helper Methods
 
         private static byte[] GetRgbValuesFrom(string imagePath)
         {

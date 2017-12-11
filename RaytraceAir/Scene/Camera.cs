@@ -44,7 +44,7 @@ namespace RaytraceAir
                 viewDirection: Vector3.Normalize(new Vector3(0, -1.8f, -10)),
                 horizontalFoV: 30,
                 widthInPixel: lowPixels ? 480 : 1920,
-                heightInPixel: lowPixels ? 315: 1260);
+                heightInPixel: lowPixels ? 270: 1080);
         }
 
         public static Camera CreateStraightCamera(bool lowPixels = false)
@@ -55,7 +55,7 @@ namespace RaytraceAir
                 viewDirection: Vector3.Normalize(new Vector3(0, 0, -1)),
                 horizontalFoV: 30,
                 widthInPixel: lowPixels ? 480 : 1920,
-                heightInPixel: lowPixels ? 315 : 1260);
+                heightInPixel: lowPixels ? 270 : 1080);
         }
     }
 }

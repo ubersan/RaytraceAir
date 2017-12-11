@@ -49,7 +49,7 @@ namespace Renderer
 
         private static void RenderScene()
         {
-            RenderSingleFrame(TestScenes.CornellBox(), AppEnvironment.OutputFolder, "render");
+            RenderSingleFrame(TestScenes.SpheresWithMirror(), AppEnvironment.OutputFolder, "render");
             //RenderAnimationFrames(numSteps: 3);
         }
 
