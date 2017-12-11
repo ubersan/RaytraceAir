@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Renderer</RootNamespace>
     <AssemblyName>Renderer</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -64,15 +64,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Renderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RendererMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RaytraceAir\RaytraceAir.csproj">
-      <Project>{217B1BA2-E77F-42CF-BF07-AA4430E50AE7}</Project>
+      <Project>{217b1ba2-e77f-42cf-bf07-aa4430e50ae7}</Project>
       <Name>RaytraceAir</Name>
     </ProjectReference>
   </ItemGroup>

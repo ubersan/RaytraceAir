@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RaytraceAir</RootNamespace>
     <AssemblyName>RaytraceAir</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -64,23 +64,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppEnvironment.cs" />
-    <Compile Include="BitmapExporter.cs" />
-    <Compile Include="Camera.cs" />
-    <Compile Include="DistantLight.cs" />
-    <Compile Include="Light.cs" />
-    <Compile Include="Material.cs" />
-    <Compile Include="Plane.cs" />
-    <Compile Include="PointLight.cs" />
-    <Compile Include="ProgressMonitor.cs" />
+    <Compile Include="Utils\AppEnvironment.cs" />
+    <Compile Include="Utils\BitmapExporter.cs" />
+    <Compile Include="Scene\Camera.cs" />
+    <Compile Include="SceneObjects\DistantLight.cs" />
+    <Compile Include="SceneObjects\Light.cs" />
+    <Compile Include="SceneObjects\Material.cs" />
+    <Compile Include="SceneObjects\Plane.cs" />
+    <Compile Include="SceneObjects\PointLight.cs" />
+    <Compile Include="Utils\ProgressMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rectangle.cs" />
-    <Compile Include="RectangularLight.cs" />
-    <Compile Include="Scene.cs" />
-    <Compile Include="SceneObject.cs" />
-    <Compile Include="Sphere.cs" />
-    <Compile Include="SphericalLight.cs" />
-    <Compile Include="TestScenes.cs" />
+    <Compile Include="SceneObjects\Rectangle.cs" />
+    <Compile Include="SceneObjects\RectangularLight.cs" />
+    <Compile Include="Scene\Scene.cs" />
+    <Compile Include="SceneObjects\SceneObject.cs" />
+    <Compile Include="SceneObjects\Sphere.cs" />
+    <Compile Include="SceneObjects\SphericalLight.cs" />
+    <Compile Include="Scene\TestScenes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

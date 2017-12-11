@@ -5,12 +5,18 @@ namespace RaytraceAir
 {
     public static class TestScenes
     {
-        public static Scene SpheresWithMirror()
+        public static IEnumerable<Scene> AllScenes(bool lowPixels = false) => new List<Scene>
         {
-            var camera = GetBasicCamera();
+            CornellBox(lowPixels),
+            FloorWithPointLight(lowPixels),
+            FloorWithRectangularLight(lowPixels),
+            SpheresWithMirror(lowPixels),
+        };
 
+        public static Scene SpheresWithMirror(bool lowPixels = false)
+        {
             var scene = new Scene(
-                camera,
+                Camera.CreateBasicCamera(lowPixels), 
                 new List<SceneObject>
                 {
                     new Sphere(new Vector3(-4, 0, -10), 0.75f, new Vector3(1, 0, 0)),
@@ -24,17 +30,16 @@ namespace RaytraceAir
                 new List<Light>
                 {
                     new PointLight(new Vector3(0, 5, -8), new Vector3(1, 1, 1)),
-                });
+                },
+                nameof(SpheresWithMirror));
 
             return scene;
         }
 
-        public static Scene FloorWithRectangularLight()
+        public static Scene FloorWithRectangularLight(bool lowPixels = false)
         {
-            var camera = GetBasicCamera();
-
             var scene = new Scene(
-                camera,
+                Camera.CreateBasicCamera(lowPixels), 
                 new List<SceneObject>
                 {
                     new Plane(pointOnPlane: new Vector3(0, -1, 0), normal: new Vector3(0, 1, 0), color: new Vector3(1, 1, 1)),
@@ -42,17 +47,16 @@ namespace RaytraceAir
                 new List<Light>
                 {
                     new RectangularLight(new Vector3(1, 1, 1), new Vector3(0, 0, -10), 10f, 1f, -Vector3.UnitY, Vector3.UnitX)
-                });
+                },
+                nameof(FloorWithRectangularLight));
 
             return scene;
         }
 
-        public static Scene FloorWithPointLight()
+        public static Scene FloorWithPointLight(bool lowPixels = false)
         {
-            var camera = GetBasicCamera();
-
             var scene = new Scene(
-                camera,
+                Camera.CreateBasicCamera(lowPixels), 
                 new List<SceneObject>
                 {
                     new Plane(pointOnPlane: new Vector3(0, -1, 0), normal: new Vector3(0, 1, 0), color: new Vector3(1, 1, 1)),
@@ -60,18 +64,17 @@ namespace RaytraceAir
                 new List<Light>
                 {
                     new PointLight(new Vector3(0, 0, -10), new Vector3(1, 1, 1)),
-                });
+                },
+                nameof(FloorWithPointLight));
 
             return scene;
         }
 
-        public static Scene CornellBox()
+        public static Scene CornellBox(bool lowPixels = false)
         {
-            var camera = GetStraigthCamera();
-
             var d = 4f;
             var scene = new  Scene(
-                camera,
+                Camera.CreateStraightCamera(lowPixels), 
                 new List<SceneObject>
                 {
                     new Plane(pointOnPlane: new Vector3(0, -d, 0), normal: new Vector3(0, 1, 0), color: new Vector3(1, 1, 1)),
@@ -84,35 +87,10 @@ namespace RaytraceAir
                 new List<Light>
                 {
                     new RectangularLight(color: Vector3.One, center: new Vector3(0, d - 1e-2f, 0), width: 2f, height: 2f, normal: new Vector3(0, -1, 0), widthAxis: new Vector3(1, 0, 0))
-                });
+                },
+                nameof(CornellBox));
 
             return scene;
-        }
-
-        private static Camera GetBasicCamera()
-        {
-            var camera = new Camera(
-                position: new Vector3(0, 3, 10),
-                upDirection: Vector3.Normalize(new Vector3(0, 10, -1.8f)),
-                viewDirection: Vector3.Normalize(new Vector3(0, -1.8f, -10)),
-                horizontalFoV: 30,
-                widthInPixel: 1980,
-                heightInPixel: 1260);
-
-            return camera;
-        }
-
-        private static Camera GetStraigthCamera()
-        {
-            var camera = new Camera(
-                position: new Vector3(0, 0, 30),
-                upDirection: Vector3.Normalize(new Vector3(0, 1, 0)),
-                viewDirection: Vector3.Normalize(new Vector3(0, 0, -1)),
-                horizontalFoV: 30,
-                widthInPixel: 1980,
-                heightInPixel: 1260);
-
-            return camera;
         }
     }
 }

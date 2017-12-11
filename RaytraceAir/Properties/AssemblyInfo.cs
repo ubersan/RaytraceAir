@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("RaytraceAir")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Zuehlke Engineering")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("RaytraceAir")]
-[assembly: AssemblyCopyright("Copyright © Zuehlke Engineering 2017")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
