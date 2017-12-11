@@ -34,7 +34,11 @@ namespace Renderer
 
         private static void ProduceTestReferences()
         {
-            Directory.Delete(AppEnvironment.TestReferenceFolder, true);
+            if (Directory.Exists(AppEnvironment.TestReferenceFolder))
+            {
+                Directory.Delete(AppEnvironment.TestReferenceFolder, true);
+            }
+
             Directory.CreateDirectory(AppEnvironment.TestReferenceFolder);
 
             foreach (var testScene in TestScenes.AllScenes(lowPixels: true))
