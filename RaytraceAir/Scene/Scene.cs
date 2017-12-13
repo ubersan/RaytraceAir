@@ -9,17 +9,16 @@ namespace RaytraceAir
     public class Scene
     {
         private readonly List<SceneObject> _sceneObjects;
-        private readonly List<Light> _lights;
         //private readonly Vector3 _background = new Vector3(0.8f, 0.2f, 0.3f);
         private readonly Vector3 _background = Vector3.Zero;
         private const int LIGHT_SAMPLES = 5;
 
-        public Scene(Camera camera, List<SceneObject> sceneObjects, List<Light> lights, string name = "render")
+        public Scene(Camera camera, List<SceneObject> sceneObjects, string name = "render")
         {
             Camera = camera;
             Name = name;
             _sceneObjects = sceneObjects;
-            _lights = lights;
+            // TODO: not respecting IOC or DI principle
             ProgressMonitor = new ProgressMonitor(Camera.NumberOfPixels);
         }
 
@@ -28,7 +27,8 @@ namespace RaytraceAir
 
         public ProgressMonitor ProgressMonitor { get; }
 
-        private IEnumerable<SceneObject> SceneObjectsWithLights => _sceneObjects.Concat(_lights);
+        private IEnumerable<SceneObject> SceneObjectsWithoutLights => _sceneObjects.Where(sceneObject => sceneObject.Material != Material.Light);
+        private IEnumerable<SceneObject> Lights => _sceneObjects.Where(sceneObject => sceneObject.Material == Material.Light);
 
         public void Render()
         {
@@ -37,6 +37,10 @@ namespace RaytraceAir
             foreach (var pixel in GetPixel())
                 //   Parallel.ForEach(GetPixel(), pixel =>
             {
+                //if (pixel.I == 840 && pixel.J == 560)
+                //{
+                //    var i = 313;
+                //}
                 var originPrimaryRay = Camera.Position;
                 var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection +
                                             pixel.Y * Camera.UpDirection);
@@ -68,7 +72,7 @@ namespace RaytraceAir
                 {
                     var originShadowRay = hitPoint + hitSceneObject.Normal(hitPoint) * 1e-4f;
 
-                    foreach (var light in _lights)
+                    foreach (var light in Lights)
                     {
                         // TODO: Works only for 1 light
                         for (var i = 0; i < LIGHT_SAMPLES; ++i)
@@ -192,7 +196,7 @@ namespace RaytraceAir
             hitPoint = Vector3.Zero;
 
             var closestT = double.MaxValue;
-            foreach (var sceneObject in SceneObjectsWithLights)
+            foreach (var sceneObject in _sceneObjects)
             {
                 if (sceneObject.Intersects(origin, dir, out var t) && t < closestT)
                 {
@@ -207,7 +211,7 @@ namespace RaytraceAir
 
         private float TraceShadow(Vector3 origin, Vector3 dir, float distToLight)
         {
-            foreach (var sceneObject in _sceneObjects)
+            foreach (var sceneObject in SceneObjectsWithoutLights)
             {
                 if (sceneObject.Intersects(origin, dir, out var t) && t < distToLight)
                 {

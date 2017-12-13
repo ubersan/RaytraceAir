@@ -32,5 +32,22 @@ namespace RaytraceAir
         {
             return _normal;
         }
+
+        public override float GetFalloff(float distance)
+        {
+            // TODO: base class
+            return 4f * (float)Math.PI * distance * distance;
+        }
+
+        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
+        {
+            // cant sample infinitely large plane
+            throw new NotImplementedException();
+        }
+
+        public override float EmitsLightInto(Vector3 lightDir)
+        {
+            return Vector3.Dot(_normal, -lightDir) < 0 ? 0f : 1f;
+        }
     }
 }

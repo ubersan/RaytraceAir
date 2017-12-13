@@ -10,8 +10,9 @@ namespace RaytraceAir
         private readonly float _halfHeight;
         private readonly Vector3 _widthAxis;
         private readonly Vector3 _heightAxis;
+        private readonly Random _random;
 
-        public Rectangle(Vector3 center, float width, float height, Vector3 normal, Vector3 widthAxis, Vector3 color, Material material = Material.Diffuse)
+        public Rectangle(Vector3 center, float width, float height, Vector3 normal, Vector3 widthAxis, Vector3 color, Material material)
             : base(center, normal, color, material)
         {
             _center = center;
@@ -19,6 +20,7 @@ namespace RaytraceAir
             _halfHeight = height / 2f;
             _widthAxis = widthAxis;
             _heightAxis = Vector3.Cross(normal, widthAxis);
+            _random = new Random();
         }
 
         public override bool Intersects(Vector3 origin, Vector3 direction, out float t)
@@ -33,6 +35,18 @@ namespace RaytraceAir
             }
 
             return false;
+        }
+
+        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
+        {
+            // sample random point in rectangle
+            var widthSample = ((float)_random.NextDouble() - 0.5f) * _halfWidth;
+            var heightSample = ((float)_random.NextDouble() - 0.5f) * _halfHeight;
+
+            var samplePoint = _center + _widthAxis * widthSample + _heightAxis * heightSample;
+            var direction = samplePoint - hitPoint;
+
+            return (Vector3.Normalize(direction), direction.Length());
         }
     }
 }

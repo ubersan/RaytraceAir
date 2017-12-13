@@ -16,3 +16,7 @@ Renderer/obj/
 packages/
 
 Output/
+
+RaytraceAirTest/TestResults/
+
+RaytraceAirTest/ReferenceImages/

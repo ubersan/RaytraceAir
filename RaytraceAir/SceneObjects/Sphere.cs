@@ -87,5 +87,21 @@ namespace RaytraceAir
         {
             return Vector3.Normalize(p - _center);
         }
+
+        public override float GetFalloff(float distance)
+        {
+            // TODO: move into base class
+            return 4f * (float)Math.PI * distance * distance;
+        }
+
+        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override float EmitsLightInto(Vector3 lightDir)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

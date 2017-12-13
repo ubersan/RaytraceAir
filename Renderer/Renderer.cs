@@ -49,7 +49,7 @@ namespace Renderer
 
         private static void RenderScene()
         {
-            RenderSingleFrame(TestScenes.SpheresWithMirror(), AppEnvironment.OutputFolder, "render");
+            RenderSingleFrame(TestScenes.CornellBox(), AppEnvironment.OutputFolder, "render");
             //RenderAnimationFrames(numSteps: 3);
         }
 
@@ -103,11 +103,8 @@ namespace Renderer
                         new Sphere(new Vector3(-0, 0, -10), 0.75f, new Vector3(0, 1, 0)),
                         new Sphere(new Vector3(2, 0, -10), 0.75f, new Vector3(0, 1, 1)),
                         new Sphere(new Vector3(4, 0, -10), 0.75f, new Vector3(0, 0, 1)),
-                        new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1))
-                    },
-                    new List<Light>
-                    {
-                        new PointLight(start + i * step, new Vector3(1, 1, 1)),
+                        new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1)),
+                        new Point(start + i * step, new Vector3(1, 1, 1), Material.Light),
                     });
 
                 scene.Render();

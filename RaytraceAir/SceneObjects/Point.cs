@@ -3,12 +3,12 @@ using System.Numerics;
 
 namespace RaytraceAir
 {
-    public class PointLight : Light
+    public class Point : SceneObject
     {
         private readonly Vector3 _position;
 
-        public PointLight(Vector3 position, Vector3 color)
-            : base(color)
+        public Point(Vector3 position, Vector3 color, Material material)
+            : base(color, material)
         {
             _position = position;
         }
