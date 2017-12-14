@@ -10,7 +10,7 @@ namespace RaytraceAir
     {
         private readonly List<SceneObject> _sceneObjects;
         private readonly Vector3 _background = Vector3.Zero;
-        private const int LIGHT_SAMPLES = 5;
+        private const int MaxLightSamples = 5;
 
         public Scene(Camera camera, List<SceneObject> sceneObjects, ProgressMonitor progressMonitor, string name)
         {
@@ -35,7 +35,7 @@ namespace RaytraceAir
             foreach (var pixel in Rasterizer.GetPixels(Camera))
                 //   Parallel.ForEach(GetPixel(), pixel =>
             {
-                //if (pixel.I == 840 && pixel.J == 560)
+                //if (pixel.I == 34 && pixel.J == 30)
                 //{
                 //    var i = 313;
                 //}
@@ -69,17 +69,13 @@ namespace RaytraceAir
                 else
                 {
                     var originShadowRay = hitPoint + hitSceneObject.Normal(hitPoint) * 1e-4f;
-
                     foreach (var light in Lights)
                     {
                         // TODO: Works only for 1 light
-                        // TODO: Only take multiple samples if the light is an area light
-                        for (var i = 0; i < LIGHT_SAMPLES; ++i)
-                        //var lightSamples = light.GetSamples(hitPoint, LIGHT_SAMPLES).ToList();
-                        //foreach (var ray in lightSamples)
+                        var lightSamples = light.GetSamples(hitPoint, MaxLightSamples).ToList();
+                        foreach (var ray in lightSamples)
                         {
-                            (var lightDir, var lightDist) = light.GetRay(hitPoint);
-                            //(var lightDir, var lightDist) = ray;
+                            (var lightDir, var lightDist) = ray;
                             var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
                             isIlluminated *= light.EmitsLightInto(lightDir);
 
@@ -91,9 +87,8 @@ namespace RaytraceAir
 
                             if (isIlluminated > 0 && hitSceneObject.Material == Material.Mirror)
                             {
-                                var reflectionDir =
-                                    Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
-                                color += 0.8f * CastRay(originShadowRay, reflectionDir, ++depth);
+                                var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
+                                color += 0.8f * CastRay(originShadowRay, reflectionDir, depth + 1);
                             }
                             else if (isIlluminated > 0 && hitSceneObject.Material == Material.Transparent)
                             {
@@ -106,18 +101,17 @@ namespace RaytraceAir
                                 {
                                     var refractionDir = Vector3.Normalize(GetRefractionDir(dir, hitNormal, 1.5f));
                                     var refractionorig = outside ? hitPoint - bias : hitPoint + bias;
-                                    refractionColor = CastRay(refractionorig, refractionDir, ++depth);
+                                    refractionColor = CastRay(refractionorig, refractionDir, depth + 1);
                                 }
                                 var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitNormal));
                                 var reflectionOrig = outside ? hitPoint + bias : hitPoint - bias;
-                                var reflectionColor = CastRay(reflectionOrig, reflectionDir, ++depth);
+                                var reflectionColor = CastRay(reflectionOrig, reflectionDir, depth + 1);
 
                                 color += reflectionColor * kr + refractionColor * (1 - kr);
                             }
                         }
                         
-                        //color /= lightSamples.Count;
-                        color /= LIGHT_SAMPLES;
+                        color /= lightSamples.Count;
                     }
                 }
             }
