@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Scene\Rasterizer.cs" />
     <Compile Include="Utils\AppEnvironment.cs" />
     <Compile Include="Utils\BitmapExporter.cs" />
     <Compile Include="Scene\Camera.cs" />

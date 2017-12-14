@@ -32,7 +32,7 @@ namespace RaytraceAir
         {
             ProgressMonitor.Start();
 
-            foreach (var pixel in GetPixel())
+            foreach (var pixel in Rasterizer.GetPixels(Camera))
                 //   Parallel.ForEach(GetPixel(), pixel =>
             {
                 //if (pixel.I == 840 && pixel.J == 560)
@@ -122,11 +122,6 @@ namespace RaytraceAir
             }
 
             return color;
-        }
-
-        private float deg2rad(float deg)
-        {
-            return deg * (float) Math.PI / 180;
         }
 
         private Vector3 GetReflectionDir(Vector3 viewDir, Vector3 normal)
@@ -219,29 +214,5 @@ namespace RaytraceAir
 
             return 1f;
         }
-
-        private IEnumerable<Pixel> GetPixel()
-        {
-            var scale = (float) Math.Tan(deg2rad(Camera.HorizontalFoV * 0.5f));
-            var aspectRatio = Camera.WidthInPixel / (float) Camera.HeightInPixel;
-            for (var j = 0; j < Camera.HeightInPixel; ++j)
-            {
-                for (var i = 0; i < Camera.WidthInPixel; ++i)
-                {
-                    var x = (2 * (i + 0.5f) / Camera.WidthInPixel - 1) * scale;
-                    var y = (1 - 2 * (j + 0.5f) / Camera.HeightInPixel) * scale * 1 / aspectRatio;
-
-                    yield return new Pixel {X = x, Y = y, I = i, J = j};
-                }
-            }
-        }
-    }
-
-    public struct Pixel
-    {
-        public float X;
-        public float Y;
-        public int I;
-        public int J;
     }
 }
