@@ -32,7 +32,7 @@ namespace RaytraceAir
         public float HorizontalFoV { get; }
         public int WidthInPixel { get; }
         public int HeightInPixel { get; }
-        public Vector3[,] Pixels { get; }
+        public Vector3[,] Pixels { get; set; }
 
         public int NumberOfPixels => WidthInPixel * HeightInPixel;
 

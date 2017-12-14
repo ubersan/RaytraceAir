@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RaytraceAir;
@@ -17,8 +19,9 @@ namespace RaytraceAirTest
         private const double HiMaxAverageError = 10;
 
         private Scene _scene;
-        private string _actualImagePath;
+        private string _testImagePath;
         private string _referenceImagePath;
+        private DirectoryInfo _testDirectoryRoot;
 
         #region Test Methods
 
@@ -82,9 +85,9 @@ namespace RaytraceAirTest
         {
             _scene.Render();
 
-            var directory = Directory.CreateDirectory(AppEnvironment.TempFolderInTestResults);
+            _testDirectoryRoot = Directory.CreateDirectory(AppEnvironment.TempFolderInTestResults);
 
-            _actualImagePath = BitmapExporter.Export(_scene.Camera, directory.FullName, _scene.Name);
+            _testImagePath = BitmapExporter.Export(_scene.Camera, _testDirectoryRoot.FullName, _scene.Name);
             _referenceImagePath = Path.Combine(AppEnvironment.TestReferenceFolder, $"{_scene.Name}.jpg");
         }
 
@@ -115,17 +118,44 @@ namespace RaytraceAirTest
 
         private void Check_RenderedImageMatchesReferenceWithTolerance(double maxAverageError)
         {
-            var actualBytes = GetRgbValuesFrom(_actualImagePath);
+            var actualBytes = GetRgbValuesFrom(_testImagePath);
             var referenceBytes = GetRgbValuesFrom(_referenceImagePath);
 
             Assert.AreEqual(actualBytes.Length, referenceBytes.Length);
 
-            var sumOfDifferences = actualBytes
+            var perPixelAbsoluteDifferences = actualBytes
                 .Zip(referenceBytes, (actualByte, referenceByte) => Math.Abs(actualByte - referenceByte))
+                .ToArray();
+
+            GenerateDifferenceImage(perPixelAbsoluteDifferences);
+
+            var sumOfDifferences = perPixelAbsoluteDifferences
                 .Sum();
 
             var averageError = sumOfDifferences / (double)actualBytes.Length;
-            Assert.IsTrue(averageError <= maxAverageError);
+            Assert.IsTrue(averageError <= maxAverageError, $"averageError = {averageError}, maxAverageError = {maxAverageError}");
+        }
+
+        private void GenerateDifferenceImage(IReadOnlyList<int> perPixelAbsoluteDifferences)
+        {
+            var maxAbsoluteErrorOverAllChannels = perPixelAbsoluteDifferences.Max();
+
+            var diffCam = _scene.Camera;
+            diffCam.Pixels = new Vector3[diffCam.WidthInPixel, diffCam.HeightInPixel];
+            for (var j = 0; j < diffCam.HeightInPixel; ++j)
+            {
+                for (var i = 0; i < diffCam.WidthInPixel; ++i)
+                {
+                    var start = 3 * (j * diffCam.WidthInPixel + i);
+                    var b = perPixelAbsoluteDifferences[start] / (float)maxAbsoluteErrorOverAllChannels;
+                    var g = perPixelAbsoluteDifferences[start + 1] / (float)maxAbsoluteErrorOverAllChannels;
+                    var r = perPixelAbsoluteDifferences[start + 2] / (float)maxAbsoluteErrorOverAllChannels;
+
+                    diffCam.Pixels[i, j] = new Vector3(b, g, r);
+                }
+            }
+
+            BitmapExporter.Export(_scene.Camera, _testDirectoryRoot.FullName, $"{_scene.Name}_diff");
         }
 
         private static byte[] GetRgbValuesFrom(string imagePath)

@@ -8,6 +8,7 @@ namespace RaytraceAir
 {
     public static class BitmapExporter
     {
+        // TODO: It makes no sense to export the camera. One would expect to export data instead.
         public static string Export(Camera camera, string targetFolder, string filename)
         {
             using (var bmp = new Bitmap(camera.WidthInPixel, camera.HeightInPixel, PixelFormat.Format24bppRgb))

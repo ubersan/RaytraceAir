@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace RaytraceAir
@@ -100,6 +101,11 @@ namespace RaytraceAir
         }
 
         public override float EmitsLightInto(Vector3 lightDir)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<(Vector3 direction, float distance)> GetSamples(Vector3 hitPoint, int maxSamples)
         {
             throw new NotImplementedException();
         }

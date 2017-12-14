@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace RaytraceAir
@@ -41,13 +42,19 @@ namespace RaytraceAir
 
         public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
         {
-            // cant sample infinitely large plane
+            // sampling an infinitely large plane won't converge
             throw new NotImplementedException();
         }
 
         public override float EmitsLightInto(Vector3 lightDir)
         {
             return Vector3.Dot(_normal, -lightDir) < 0 ? 0f : 1f;
+        }
+
+        public override IEnumerable<(Vector3 direction, float distance)> GetSamples(Vector3 hitPoint, int maxSamples)
+        {
+            // sampling an infinitely large plane won't converge
+            throw new NotImplementedException();
         }
     }
 }

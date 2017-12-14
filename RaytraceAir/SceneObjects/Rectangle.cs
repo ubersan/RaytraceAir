@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace RaytraceAir
@@ -47,6 +48,14 @@ namespace RaytraceAir
             var direction = samplePoint - hitPoint;
 
             return (Vector3.Normalize(direction), direction.Length());
+        }
+
+        public override IEnumerable<(Vector3 direction, float distance)> GetSamples(Vector3 hitPoint, int maxSamples)
+        {
+            for (var i = 0; i < maxSamples; ++i)
+            {
+                yield return GetRay(hitPoint);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace RaytraceAir
@@ -27,6 +28,11 @@ namespace RaytraceAir
         public override float EmitsLightInto(Vector3 lightDir)
         {
             return 1f;
+        }
+
+        public override IEnumerable<(Vector3 direction, float distance)> GetSamples(Vector3 hitPoint, int maxSamples)
+        {
+            yield return GetRay(hitPoint);
         }
 
         public override bool Intersects(Vector3 origin, Vector3 direction, out float t)

@@ -73,9 +73,13 @@ namespace RaytraceAir
                     foreach (var light in Lights)
                     {
                         // TODO: Works only for 1 light
+                        // TODO: Only take multiple samples if the light is an area light
                         for (var i = 0; i < LIGHT_SAMPLES; ++i)
+                        //var lightSamples = light.GetSamples(hitPoint, LIGHT_SAMPLES).ToList();
+                        //foreach (var ray in lightSamples)
                         {
                             (var lightDir, var lightDist) = light.GetRay(hitPoint);
+                            //(var lightDir, var lightDist) = ray;
                             var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
                             isIlluminated *= light.EmitsLightInto(lightDir);
 
@@ -111,7 +115,8 @@ namespace RaytraceAir
                                 color += reflectionColor * kr + refractionColor * (1 - kr);
                             }
                         }
-
+                        
+                        //color /= lightSamples.Count;
                         color /= LIGHT_SAMPLES;
                     }
                 }
