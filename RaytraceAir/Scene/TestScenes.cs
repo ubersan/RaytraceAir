@@ -15,8 +15,10 @@ namespace RaytraceAir
 
         public static Scene SpheresWithMirror(bool lowPixels = false)
         {
+            var basicCamera = Camera.CreateBasicCamera(lowPixels);
+
             var scene = new Scene(
-                Camera.CreateBasicCamera(lowPixels), 
+                basicCamera, 
                 new List<SceneObject>
                 {
                     new Sphere(new Vector3(-4, 0, -10), 0.75f, new Vector3(1, 0, 0)),
@@ -28,6 +30,7 @@ namespace RaytraceAir
                     new Rectangle(new Vector3(0, 1, -11), 9.5f, 1.5f, Vector3.Normalize(new Vector3(0, -0.3f, 1f)), Vector3.UnitX, new Vector3(0.8f, 0.4f, 0.3f), Material.Mirror),
                     new Point(new Vector3(0, 5, -8), new Vector3(1, 1, 1),  Material.Light),
                 },
+                new ProgressMonitor(basicCamera.NumberOfPixels),
                 nameof(SpheresWithMirror));
 
             return scene;
@@ -35,13 +38,15 @@ namespace RaytraceAir
 
         public static Scene FloorWithRectangularLight(bool lowPixels = false)
         {
+            var basicCamera = Camera.CreateBasicCamera(lowPixels);
             var scene = new Scene(
-                Camera.CreateBasicCamera(lowPixels), 
+                basicCamera, 
                 new List<SceneObject>
                 {
                     new Plane(pointOnPlane: new Vector3(0, -1, 0), normal: new Vector3(0, 1, 0), color: new Vector3(1, 1, 1)),
                     new Rectangle(new Vector3(0, 0, -10), 10f, 1f, -Vector3.UnitY, Vector3.UnitX, Vector3.One, Material.Light),
                 },
+                new ProgressMonitor(basicCamera.NumberOfPixels),
                 nameof(FloorWithRectangularLight));
 
             return scene;
@@ -49,13 +54,15 @@ namespace RaytraceAir
 
         public static Scene FloorWithPointLight(bool lowPixels = false)
         {
+            var basicCamera = Camera.CreateBasicCamera(lowPixels);
             var scene = new Scene(
-                Camera.CreateBasicCamera(lowPixels), 
+                basicCamera,
                 new List<SceneObject>
                 {
                     new Plane(pointOnPlane: new Vector3(0, -1, 0), normal: new Vector3(0, 1, 0), color: new Vector3(1, 1, 1)),
                     new Point(new Vector3(0, 0, -10), new Vector3(1, 1, 1), Material.Light),
                 },
+                new ProgressMonitor(basicCamera.NumberOfPixels),
                 nameof(FloorWithPointLight));
 
             return scene;
@@ -63,19 +70,20 @@ namespace RaytraceAir
 
         public static Scene CornellBox(bool lowPixels = false)
         {
-            var d = 4f;
-            var scene = new  Scene(
-                Camera.CreateStraightCamera(lowPixels), 
+            var straightCamera = Camera.CreateStraightCamera(lowPixels);
+            var scene = new Scene(
+                straightCamera, 
                 new List<SceneObject>
                 {
-                    new Plane(pointOnPlane: new Vector3(0, -d, 0), normal: new Vector3(0, 1, 0), color: new Vector3(1, 1, 1)),
-                    new Plane(pointOnPlane: new Vector3(0, d, 0), normal: new Vector3(0, -1, 0), color: new Vector3(1, 1, 1)),
-                    new Plane(pointOnPlane: new Vector3(-d, 0, 0), normal: new Vector3(1, 0, 0), color: new Vector3(0, 0, 1)),
-                    new Plane(pointOnPlane: new Vector3(d, 0, 0), normal: new Vector3(-1, 0, 0), color: new Vector3(0, 1, 0)),
-                    new Plane(pointOnPlane: new Vector3(0, 0, -d), normal: new Vector3(0, 0, 1), color: new Vector3(1, 1, 1)),
+                    new Plane(pointOnPlane: new Vector3(0, -4f, 0), normal: new Vector3(0, 1, 0), color: new Vector3(1, 1, 1)),
+                    new Plane(pointOnPlane: new Vector3(0, 4f, 0), normal: new Vector3(0, -1, 0), color: new Vector3(1, 1, 1)),
+                    new Plane(pointOnPlane: new Vector3(-4f, 0, 0), normal: new Vector3(1, 0, 0), color: new Vector3(0, 0, 1)),
+                    new Plane(pointOnPlane: new Vector3(4f, 0, 0), normal: new Vector3(-1, 0, 0), color: new Vector3(0, 1, 0)),
+                    new Plane(pointOnPlane: new Vector3(0, 0, -4f), normal: new Vector3(0, 0, 1), color: new Vector3(1, 1, 1)),
                     new Sphere(center: new Vector3(-1f, -2f, 0), radius: 2f,  color: Vector3.One, material: Material.Mirror),
-                    new Rectangle(center: new Vector3(0, d - 1e-2f, 0), width: 2f, height: 2f, normal: new Vector3(0, -1, 0), widthAxis: new Vector3(1, 0, 0), color: Vector3.One, material: Material.Light),
+                    new Rectangle(center: new Vector3(0, 4f- 1e-2f, 0), width: 2f, height: 2f, normal: new Vector3(0, -1, 0), widthAxis: new Vector3(1, 0, 0), color: Vector3.One, material: Material.Light),
                 },
+                new ProgressMonitor(straightCamera.NumberOfPixels),
                 nameof(CornellBox));
 
             return scene;

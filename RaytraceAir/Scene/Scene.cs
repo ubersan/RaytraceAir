@@ -9,17 +9,15 @@ namespace RaytraceAir
     public class Scene
     {
         private readonly List<SceneObject> _sceneObjects;
-        //private readonly Vector3 _background = new Vector3(0.8f, 0.2f, 0.3f);
         private readonly Vector3 _background = Vector3.Zero;
         private const int LIGHT_SAMPLES = 5;
 
-        public Scene(Camera camera, List<SceneObject> sceneObjects, string name = "render")
+        public Scene(Camera camera, List<SceneObject> sceneObjects, ProgressMonitor progressMonitor, string name)
         {
             Camera = camera;
             Name = name;
             _sceneObjects = sceneObjects;
-            // TODO: not respecting IOC or DI principle
-            ProgressMonitor = new ProgressMonitor(Camera.NumberOfPixels);
+            ProgressMonitor = progressMonitor;
         }
 
         public Camera Camera { get; }

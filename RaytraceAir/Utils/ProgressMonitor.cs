@@ -6,12 +6,11 @@ namespace RaytraceAir
     {
         private readonly int _total;
         private int _current;
-        private Stopwatch _stopwatch;
+        private readonly Stopwatch _stopwatch;
 
         public ProgressMonitor(int total)
         {
             _total = total;
-
             _stopwatch = new Stopwatch();
         }
 
@@ -20,16 +19,21 @@ namespace RaytraceAir
             ++_current;
         }
 
-        public string PrintPercentage()
+        private string Percentage()
         {
             var percentage = 100.0 / _total * _current;
             return $"{percentage:0.00}%";
         }
 
-        public string PrintTimeElapsed()
+        private string TimeElapsed()
         {
             var seconds = _stopwatch.ElapsedMilliseconds / 1000.0;
             return $"{seconds:0} sec";
+        }
+
+        public string Progress()
+        {
+            return $"{ Percentage() } [{ TimeElapsed() }]";
         }
 
         public void Start()

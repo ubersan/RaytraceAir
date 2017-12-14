@@ -80,7 +80,7 @@ namespace Renderer
             BitmapExporter.Export(scene.Camera, targetFolder, outputName);
         }
 
-        private static string ProgressString(Scene scene) => $"\rScene {scene.Name}: {scene.ProgressMonitor.PrintPercentage()} [{scene.ProgressMonitor.PrintTimeElapsed()}]";
+        private static string ProgressString(Scene scene) => $"\rScene {scene.Name}: { scene.ProgressMonitor.Progress() }";
 
         private static void RenderAnimationFrames(int numSteps)
         {
@@ -105,7 +105,9 @@ namespace Renderer
                         new Sphere(new Vector3(4, 0, -10), 0.75f, new Vector3(0, 0, 1)),
                         new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1)),
                         new Point(start + i * step, new Vector3(1, 1, 1), Material.Light),
-                    });
+                    },
+                    new ProgressMonitor(camera.NumberOfPixels),
+                    "render");
 
                 scene.Render();
                 BitmapExporter.Export(camera, targetFolder, $@"frame_{PrependWithZerosIfNeeded(i.ToString(), 4)}.jpg");
