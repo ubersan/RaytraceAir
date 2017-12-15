@@ -10,6 +10,7 @@ namespace RaytraceAir
     {
         private readonly List<SceneObject> _sceneObjects;
         private readonly Vector3 _background = Vector3.Zero;
+        private const int MaxRecursionDepth = 5;
         private const int MaxLightSamples = 5;
 
         public Scene(Camera camera, List<SceneObject> sceneObjects, ProgressMonitor progressMonitor, string name)
@@ -40,11 +41,9 @@ namespace RaytraceAir
                 //    var i = 313;
                 //}
                 var originPrimaryRay = Camera.Position;
-                var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection +
-                                            pixel.Y * Camera.UpDirection);
+                var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection + pixel.Y * Camera.UpDirection);
 
-                var color = CastRay(originPrimaryRay, dir, depth: 0);
-                Camera.Pixels[pixel.I, pixel.J] = color;
+                Camera.Pixels[pixel.I, pixel.J] = CastRay(originPrimaryRay, dir, depth: 0);
 
                 ProgressMonitor.Advance();
             }
@@ -53,7 +52,7 @@ namespace RaytraceAir
 
         private Vector3 CastRay(Vector3 origin, Vector3 dir, int depth)
         {
-            if (depth == 5)
+            if (depth == MaxRecursionDepth)
             {
                 return _background;
             }

@@ -9,7 +9,7 @@ namespace RaytraceAir
         private readonly Vector3 _pointOnPlane;
         private readonly Vector3 _normal;
 
-        public Plane(Vector3 pointOnPlane, Vector3 normal, Vector3 color, Material material =  Material.Diffuse)
+        public Plane(Vector3 pointOnPlane, Vector3 normal, Vector3 color, Material material)
             : base(color, material)
         {
             _pointOnPlane = pointOnPlane;

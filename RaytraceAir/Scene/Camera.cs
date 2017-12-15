@@ -57,5 +57,16 @@ namespace RaytraceAir
                 widthInPixel: lowPixels ? 480 : 1920,
                 heightInPixel: lowPixels ? 270 : 1080);
         }
+
+        public static Camera CreateStraightTopCamera(bool lowPixels = false)
+        {
+            return new Camera(
+                position: new Vector3(0, 5, 30),
+                upDirection: Vector3.Normalize(new Vector3(0, 10, -1.8f)),
+                viewDirection: Vector3.Normalize(new Vector3(0, -1.8f, -10)),
+                horizontalFoV: 30,
+                widthInPixel: lowPixels ? 480 : 1920,
+                heightInPixel: lowPixels ? 270 : 1080);
+        }
     }
 }
