@@ -57,6 +57,14 @@ namespace RaytraceAirTest
             Then_RenderedImageMatchesReferenceWithLowTolerance();
         }
 
+        [TestMethod]
+        public void MultipleWhitePointLightsOnWhiteSphere_Render_ResultsMatchReferences()
+        {
+            Given_SceneMultipleWhitePointLightsOnWhiteSphere();
+            When_RenderAndExportScene();
+            Then_RenderedImageMatchesReferenceWithLowTolerance();
+        }
+
         #endregion
 
         #region Given, When, Then Methods
@@ -79,6 +87,11 @@ namespace RaytraceAirTest
         private void Given_SceneSpheresWithMirror()
         {
             Set_Scene(TestScenes.SpheresWithMirror);
+        }
+
+        private void Given_SceneMultipleWhitePointLightsOnWhiteSphere()
+        {
+            Set_Scene(TestScenes.MultipleWhitePointLightsOnWhiteSphere);
         }
 
         private void When_RenderAndExportScene()
