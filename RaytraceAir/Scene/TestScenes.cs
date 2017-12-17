@@ -141,7 +141,7 @@ namespace RaytraceAir
                     new Point(position: new Vector3(-0, 3f, 2), color: new Vector3(1, 0, 0), material: Material.Light),
                 },
                 new ProgressMonitor(straightTopCamera.NumberOfPixels),
-                nameof(MultipleColoredPointLightsOnWhiteSphere));
+                nameof(ThreeColoredLightsOnPlane));
 
             return scene;
         }

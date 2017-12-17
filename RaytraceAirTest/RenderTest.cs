@@ -28,7 +28,7 @@ namespace RaytraceAirTest
         [TestMethod]
         public void CornellBox_Render_ResultsMatchReferences()
         {
-            Given_SceneCornellBox();
+            Given_Scene(TestScenes.CornellBox);
             When_RenderAndExportScene();
             Then_RenderedImageMatchesReferenceWithMediumTolerance();
         }
@@ -36,7 +36,7 @@ namespace RaytraceAirTest
         [TestMethod]
         public void FloorWithPointLight_Render_ResultsMatchReferences()
         {
-            Given_SceneFloorWithPointLight();
+            Given_Scene(TestScenes.FloorWithPointLight);
             When_RenderAndExportScene();
             Then_RenderedImageMatchesReferenceWithZeroTolerance();
         }
@@ -44,7 +44,7 @@ namespace RaytraceAirTest
         [TestMethod]
         public void FloorWithRectangularLight_Render_ResultsMatchReferences()
         {
-            Given_SceneFloorWithRectangularLight();
+            Given_Scene(TestScenes.FloorWithRectangularLight);
             When_RenderAndExportScene();
             Then_RenderedImageMatchesReferenceWithHighTolerance();
         }
@@ -52,7 +52,7 @@ namespace RaytraceAirTest
         [TestMethod]
         public void SpheresWithMirror_Render_ResultsMatchReferences()
         {
-            Given_SceneSpheresWithMirror();
+            Given_Scene(TestScenes.SpheresWithMirror);
             When_RenderAndExportScene();
             Then_RenderedImageMatchesReferenceWithZeroTolerance();
         }
@@ -60,7 +60,7 @@ namespace RaytraceAirTest
         [TestMethod]
         public void MultipleWhitePointLightsOnWhiteSphere_Render_ResultsMatchReferences()
         {
-            Given_SceneMultipleWhitePointLightsOnWhiteSphere();
+            Given_Scene(TestScenes.MultipleWhitePointLightsOnWhiteSphere);
             When_RenderAndExportScene();
             Then_RenderedImageMatchesReferenceWithZeroTolerance();
         }
@@ -68,7 +68,15 @@ namespace RaytraceAirTest
         [TestMethod]
         public void MultipleColoredPointLightsOnWhiteSphere_Render_ResultsMatchReferences()
         {
-            Given_SceneMultipleColoredPointLightsOnWhiteSphere();
+            Given_Scene(TestScenes.MultipleColoredPointLightsOnWhiteSphere);
+            When_RenderAndExportScene();
+            Then_RenderedImageMatchesReferenceWithZeroTolerance();
+        }
+
+        [TestMethod]
+        public void ThreeColoredLightsOnPlane_Render_ResultsMatchReferences()
+        {
+            Given_Scene(TestScenes.ThreeColoredLightsOnPlane);
             When_RenderAndExportScene();
             Then_RenderedImageMatchesReferenceWithZeroTolerance();
         }
@@ -77,34 +85,10 @@ namespace RaytraceAirTest
 
         #region Given, When, Then Methods
 
-        private void Given_SceneCornellBox()
+        private void Given_Scene(Func<bool, Scene> testScene)
         {
-            Set_Scene(TestScenes.CornellBox);
-        }
-
-        private void Given_SceneFloorWithPointLight()
-        {
-            Set_Scene(TestScenes.FloorWithPointLight);
-        }
-
-        private void Given_SceneFloorWithRectangularLight()
-        {
-            Set_Scene(TestScenes.FloorWithRectangularLight);
-        }
-
-        private void Given_SceneSpheresWithMirror()
-        {
-            Set_Scene(TestScenes.SpheresWithMirror);
-        }
-
-        private void Given_SceneMultipleWhitePointLightsOnWhiteSphere()
-        {
-            Set_Scene(TestScenes.MultipleWhitePointLightsOnWhiteSphere);
-        }
-
-        private void Given_SceneMultipleColoredPointLightsOnWhiteSphere()
-        {
-            Set_Scene(TestScenes.MultipleColoredPointLightsOnWhiteSphere);
+            // true to choose the lowPixel version
+            _scene = testScene(true);
         }
 
         private void When_RenderAndExportScene()
@@ -135,12 +119,6 @@ namespace RaytraceAirTest
         #endregion
 
         #region  Helper Methods
-
-        private void Set_Scene(Func<bool, Scene> testScene)
-        {
-            // true to choose the lowPixel version
-            _scene = testScene(true);
-        }
 
         private void Check_RenderedImageMatchesReferenceWithTolerance(double maxAverageError)
         {
