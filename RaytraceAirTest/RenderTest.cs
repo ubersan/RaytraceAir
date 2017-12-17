@@ -14,7 +14,7 @@ namespace RaytraceAirTest
     [TestClass]
     public class RenderTests
     {
-        private const double LoMaxAverageError = 0;
+        private const double ZeroMaxAverageError = 0;
         private const double MidMaxAverageError = 2;
         private const double HiMaxAverageError = 10;
 
@@ -38,7 +38,7 @@ namespace RaytraceAirTest
         {
             Given_SceneFloorWithPointLight();
             When_RenderAndExportScene();
-            Then_RenderedImageMatchesReferenceWithLowTolerance();
+            Then_RenderedImageMatchesReferenceWithZeroTolerance();
         }
 
         [TestMethod]
@@ -54,7 +54,7 @@ namespace RaytraceAirTest
         {
             Given_SceneSpheresWithMirror();
             When_RenderAndExportScene();
-            Then_RenderedImageMatchesReferenceWithLowTolerance();
+            Then_RenderedImageMatchesReferenceWithZeroTolerance();
         }
 
         [TestMethod]
@@ -62,7 +62,15 @@ namespace RaytraceAirTest
         {
             Given_SceneMultipleWhitePointLightsOnWhiteSphere();
             When_RenderAndExportScene();
-            Then_RenderedImageMatchesReferenceWithLowTolerance();
+            Then_RenderedImageMatchesReferenceWithZeroTolerance();
+        }
+
+        [TestMethod]
+        public void MultipleColoredPointLightsOnWhiteSphere_Render_ResultsMatchReferences()
+        {
+            Given_SceneMultipleColoredPointLightsOnWhiteSphere();
+            When_RenderAndExportScene();
+            Then_RenderedImageMatchesReferenceWithZeroTolerance();
         }
 
         #endregion
@@ -94,6 +102,11 @@ namespace RaytraceAirTest
             Set_Scene(TestScenes.MultipleWhitePointLightsOnWhiteSphere);
         }
 
+        private void Given_SceneMultipleColoredPointLightsOnWhiteSphere()
+        {
+            Set_Scene(TestScenes.MultipleColoredPointLightsOnWhiteSphere);
+        }
+
         private void When_RenderAndExportScene()
         {
             _scene.Render();
@@ -104,9 +117,9 @@ namespace RaytraceAirTest
             _referenceImagePath = Path.Combine(AppEnvironment.TestReferenceFolder, $"{_scene.Name}.jpg");
         }
 
-        private void Then_RenderedImageMatchesReferenceWithLowTolerance()
+        private void Then_RenderedImageMatchesReferenceWithZeroTolerance()
         {
-            Check_RenderedImageMatchesReferenceWithTolerance(LoMaxAverageError);
+            Check_RenderedImageMatchesReferenceWithTolerance(ZeroMaxAverageError);
         }
 
         private void Then_RenderedImageMatchesReferenceWithMediumTolerance()

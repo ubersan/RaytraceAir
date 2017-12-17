@@ -12,6 +12,8 @@ namespace RaytraceAir
             FloorWithRectangularLight(lowPixels),
             SpheresWithMirror(lowPixels),
             MultipleWhitePointLightsOnWhiteSphere(lowPixels),
+            MultipleColoredPointLightsOnWhiteSphere(lowPixels),
+            ThreeColoredLightsOnPlane(lowPixels),
         };
 
         public static Scene SpheresWithMirror(bool lowPixels = false)
@@ -104,6 +106,42 @@ namespace RaytraceAir
                 },
                 new ProgressMonitor(straightTopCamera.NumberOfPixels),
                 nameof(MultipleWhitePointLightsOnWhiteSphere));
+
+            return scene;
+        }
+
+        public static Scene MultipleColoredPointLightsOnWhiteSphere(bool lowPixels = false)
+        {
+            var straightTopCamera = Camera.CreateStraightTopCamera(lowPixels);
+            var scene = new Scene(
+                straightTopCamera,
+                new List<SceneObject>
+                {
+                    new Plane(pointOnPlane: new Vector3(0, -1, 0), normal: Vector3.UnitY, color: Vector3.One,  material: Material.Diffuse),
+                    new Sphere(center: new Vector3(0, 0, 0), radius: 1f, color: Vector3.One, material: Material.Diffuse),
+                    new Point(position: new Vector3(4, 4, 0), color: new Vector3(0, 0, 1), material: Material.Light),
+                    new Point(position: new Vector3(-4, 4, 0), color: new Vector3(1, 0, 0), material: Material.Light),
+                },
+                new ProgressMonitor(straightTopCamera.NumberOfPixels),
+                nameof(MultipleColoredPointLightsOnWhiteSphere));
+
+            return scene;
+        }
+
+        public static Scene ThreeColoredLightsOnPlane(bool lowPixels = false)
+        {
+            var straightTopCamera = Camera.CreateTopCamera(lowPixels);
+            var scene = new Scene(
+                straightTopCamera,
+                new List<SceneObject>
+                {
+                    new Plane(pointOnPlane: new Vector3(0, -1, 0), normal: Vector3.UnitY, color: Vector3.One,  material: Material.Diffuse),
+                    new Point(position: new Vector3(1, 3f, 0), color: new Vector3(0, 0, 1), material: Material.Light),
+                    new Point(position: new Vector3(-1, 3f, 0), color: new Vector3(0, 1, 0), material: Material.Light),
+                    new Point(position: new Vector3(-0, 3f, 2), color: new Vector3(1, 0, 0), material: Material.Light),
+                },
+                new ProgressMonitor(straightTopCamera.NumberOfPixels),
+                nameof(MultipleColoredPointLightsOnWhiteSphere));
 
             return scene;
         }

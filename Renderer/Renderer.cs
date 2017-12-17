@@ -49,7 +49,7 @@ namespace Renderer
 
         private static void RenderScene()
         {
-            RenderSingleFrame(TestScenes.MultipleWhitePointLightsOnWhiteSphere(), AppEnvironment.OutputFolder, "render");
+            RenderSingleFrame(TestScenes.ThreeColoredLightsOnPlane(), AppEnvironment.OutputFolder, "render");
             //RenderAnimationFrames(numSteps: 3);
         }
 
