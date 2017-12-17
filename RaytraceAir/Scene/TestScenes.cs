@@ -14,6 +14,7 @@ namespace RaytraceAir
             MultipleWhitePointLightsOnWhiteSphere(lowPixels),
             MultipleColoredPointLightsOnWhiteSphere(lowPixels),
             ThreeColoredLightsOnPlane(lowPixels),
+            TransparentSphere(lowPixels),
         };
 
         public static Scene SpheresWithMirror(bool lowPixels = false)
@@ -142,6 +143,24 @@ namespace RaytraceAir
                 },
                 new ProgressMonitor(straightTopCamera.NumberOfPixels),
                 nameof(ThreeColoredLightsOnPlane));
+
+            return scene;
+        }
+
+        public static Scene TransparentSphere(bool lowPixels = false)
+        {
+            var straightCamera = Camera.CreateStraightCamera(lowPixels);
+            var scene = new Scene(
+                straightCamera,
+                new List<SceneObject>
+                {
+                    new Sphere(new Vector3(0, 0, 25), 0.5f, new Vector3(1, 1, 1), Material.Transparent),
+                    new Sphere(new Vector3(0.25f, 0, 20), 1f, new Vector3(0, 0, 1), Material.Diffuse),
+                    new Plane(new Vector3(0, -1, 0), Vector3.UnitY, new Vector3(1, 1, 1), Material.Diffuse),
+                    new Point(new Vector3(0, 5, 27), new Vector3(1, 1, 1), Material.Light),
+                },
+                new ProgressMonitor(straightCamera.NumberOfPixels),
+                nameof(TransparentSphere));
 
             return scene;
         }

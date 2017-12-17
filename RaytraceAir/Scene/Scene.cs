@@ -34,12 +34,11 @@ namespace RaytraceAir
             ProgressMonitor.Start();
 
             foreach (var pixel in Rasterizer.GetPixels(Camera))
-                //   Parallel.ForEach(GetPixel(), pixel =>
             {
-                //if (pixel.I == 34 && pixel.J == 30)
-                //{
-                //    var i = 313;
-                //}
+                if (pixel.I == 960 && pixel.J == 540)
+                {
+                    var i = 313;
+                }
                 var originPrimaryRay = Camera.Position;
                 var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection + pixel.Y * Camera.UpDirection);
 
@@ -47,7 +46,6 @@ namespace RaytraceAir
 
                 ProgressMonitor.Advance();
             }
-            //});
         }
 
         private Vector3 CastRay(Vector3 origin, Vector3 dir, int depth)
@@ -63,6 +61,7 @@ namespace RaytraceAir
             {
                 if (hitSceneObject.Material == Material.Light)
                 {
+                    // TODO: What if light is not emitted into this direction...
                     color = hitSceneObject.Color;
                 }
                 else
@@ -202,10 +201,16 @@ namespace RaytraceAir
 
         private float TraceShadow(Vector3 origin, Vector3 dir, float distToLight)
         {
+            // TODO: I still could collide with a light, which is not emitting light into the object's direction
             foreach (var sceneObject in SceneObjectsWithoutLights)
             {
                 if (sceneObject.Intersects(origin, dir, out var t) && t < distToLight)
                 {
+                    if (sceneObject.Material == Material.Transparent)
+                    {
+                        continue;
+                    }
+
                     return 0f;
                 }
             }
