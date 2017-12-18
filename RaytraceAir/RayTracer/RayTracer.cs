@@ -58,27 +58,14 @@ namespace RaytraceAir
 
                             if (hitSceneObject.Material == Material.Mirror)
                             {
-                                var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
-                                color += 0.8f * CastRay(originShadowRay, reflectionDir, depth + 1);
+                                var normal = hitSceneObject.Normal(hitPoint);
+                                color += MirrorColorContribution(originShadowRay, dir, normal, depth);
                             }
                             else if (hitSceneObject.Material == Material.Transparent)
+
                             {
                                 var hitNormal = hitSceneObject.Normal(hitPoint);
-                                var kr = Fresnel(dir, hitNormal, 1.5f);
-                                var outside = Vector3.Dot(dir, hitNormal) < 0;
-                                var bias = 1e-4f * hitNormal;
-                                var refractionColor = Vector3.Zero;
-                                if (kr < 1)
-                                {
-                                    var refractionDir = Vector3.Normalize(GetRefractionDir(dir, hitNormal, 1.5f));
-                                    var refractionorig = outside ? hitPoint - bias : hitPoint + bias;
-                                    refractionColor = CastRay(refractionorig, refractionDir, depth + 1);
-                                }
-                                var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitNormal));
-                                var reflectionOrig = outside ? hitPoint + bias : hitPoint - bias;
-                                var reflectionColor = CastRay(reflectionOrig, reflectionDir, depth + 1);
-
-                                color += reflectionColor * kr + refractionColor * (1 - kr);
+                                color += TranparentColorContribution(originShadowRay, dir, hitPoint, hitNormal, depth);
                             }
                         }
 
@@ -92,6 +79,31 @@ namespace RaytraceAir
             }
 
             return color;
+        }
+
+        private static Vector3 TranparentColorContribution(Vector3 originShadowRay, Vector3 dir, Vector3 hitPoint, Vector3 hitNormal, int depth)
+        {
+            var kr = Fresnel(dir, hitNormal, 1.5f);
+            var outside = Vector3.Dot(dir, hitNormal) < 0;
+            var bias = 1e-4f * hitNormal;
+            var refractionColor = Vector3.Zero;
+            if (kr < 1)
+            {
+                var refractionDir = Vector3.Normalize(GetRefractionDir(dir, hitNormal, 1.5f));
+                var refractionorig = outside ? hitPoint - bias : hitPoint + bias;
+                refractionColor = CastRay(refractionorig, refractionDir, depth + 1);
+            }
+            var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitNormal));
+            var reflectionOrig = outside ? hitPoint + bias : hitPoint - bias;
+            var reflectionColor = CastRay(reflectionOrig, reflectionDir, depth + 1);
+
+            return reflectionColor * kr + refractionColor * (1 - kr);
+        }
+
+        private static Vector3 MirrorColorContribution(Vector3 originShadowRay, Vector3 dir, Vector3 normal, int depth)
+        {
+            var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, normal));
+            return 0.8f * CastRay(originShadowRay, reflectionDir, depth + 1);
         }
 
         private static Vector3 HitObjectColorContribution(SceneObject hitSceneObject, Vector3 hitPoint, SceneObject light, Vector3 lightDir, float lightDist)

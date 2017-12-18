@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace RaytraceAir
 {
     public class Scene
     {
         private readonly List<SceneObject> _sceneObjects;
-        private readonly Vector3 _background = Vector3.Zero;
-        private const int MaxRecursionDepth = 5;
-        private const int MaxLightSamples = 5;
 
         public Scene(Camera camera, List<SceneObject> sceneObjects, ProgressMonitor progressMonitor, string name)
         {
@@ -25,9 +19,6 @@ namespace RaytraceAir
         public string Name { get; }
 
         public ProgressMonitor ProgressMonitor { get; }
-
-        private IEnumerable<SceneObject> SceneObjectsWithoutLights => _sceneObjects.Where(sceneObject => sceneObject.Material != Material.Light);
-        private IEnumerable<SceneObject> Lights => _sceneObjects.Where(sceneObject => sceneObject.Material == Material.Light);
 
         public void Render()
         {
