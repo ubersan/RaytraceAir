@@ -73,17 +73,9 @@ namespace RaytraceAir
                         var lightSamples = light.GetSamples(hitPoint, MaxLightSamples).ToList();
                         foreach ((var lightDir, var lightDist) in lightSamples)
                         {
-                            var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
-                            isIlluminated &= light.EmitsLightInto(lightDir);
+                            var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist) && light.EmitsLightInto(lightDir);
 
-                            var contribution = Vector3.Dot(lightDir, hitSceneObject.Normal(hitPoint));
-                            contribution *= 4000 * hitSceneObject.Albedo / (float) Math.PI;
-                            contribution /= light.GetFalloff(lightDist);
-
-                            if (isIlluminated)
-                            {
-                                color += hitSceneObject.Color * light.Color * Math.Max(0, contribution);
-                            }
+                            color += HitObjectColorContribution(isIlluminated, hitSceneObject, hitPoint, light, lightDir, lightDist);
 
                             if (isIlluminated && hitSceneObject.Material == Material.Mirror)
                             {
@@ -121,6 +113,20 @@ namespace RaytraceAir
             }
 
             return color;
+        }
+
+        private Vector3 HitObjectColorContribution(bool isIlluminated, SceneObject hitSceneObject, Vector3 hitPoint, SceneObject light, Vector3 lightDir, float lightDist)
+        {
+            if (!isIlluminated)
+            {
+                return Vector3.Zero;
+            }
+
+            var contribution = Vector3.Dot(lightDir, hitSceneObject.Normal(hitPoint));
+            contribution *= 4000 * hitSceneObject.Albedo / (float)Math.PI;
+            contribution /= light.GetFalloff(lightDist);
+
+            return hitSceneObject.Color * light.Color * Math.Max(0, contribution);
         }
 
         private Vector3 GetReflectionDir(Vector3 viewDir, Vector3 normal)
