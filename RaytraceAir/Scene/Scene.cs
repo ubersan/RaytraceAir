@@ -75,7 +75,13 @@ namespace RaytraceAir
                         {
                             var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist) && light.EmitsLightInto(lightDir);
 
-                            color += HitObjectColorContribution(isIlluminated, hitSceneObject, hitPoint, light, lightDir, lightDist);
+                            if (!isIlluminated)
+                            {
+                                // no color contribution in this sample
+                                continue;
+                            }
+
+                            color += HitObjectColorContribution(hitSceneObject, hitPoint, light, lightDir, lightDist);
 
                             if (isIlluminated && hitSceneObject.Material == Material.Mirror)
                             {
@@ -115,13 +121,8 @@ namespace RaytraceAir
             return color;
         }
 
-        private Vector3 HitObjectColorContribution(bool isIlluminated, SceneObject hitSceneObject, Vector3 hitPoint, SceneObject light, Vector3 lightDir, float lightDist)
+        private Vector3 HitObjectColorContribution(SceneObject hitSceneObject, Vector3 hitPoint, SceneObject light, Vector3 lightDir, float lightDist)
         {
-            if (!isIlluminated)
-            {
-                return Vector3.Zero;
-            }
-
             var contribution = Vector3.Dot(lightDir, hitSceneObject.Normal(hitPoint));
             contribution *= 4000 * hitSceneObject.Albedo / (float)Math.PI;
             contribution /= light.GetFalloff(lightDist);
