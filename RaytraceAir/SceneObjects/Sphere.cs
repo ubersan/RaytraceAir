@@ -100,7 +100,7 @@ namespace RaytraceAir
             throw new NotImplementedException();
         }
 
-        public override float EmitsLightInto(Vector3 lightDir)
+        public override bool EmitsLightInto(Vector3 lightDir)
         {
             throw new NotImplementedException();
         }

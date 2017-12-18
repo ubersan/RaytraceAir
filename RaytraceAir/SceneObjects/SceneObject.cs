@@ -17,7 +17,7 @@ namespace RaytraceAir
         // light properties
         public abstract float GetFalloff(float distance);
         public abstract (Vector3 direction, float distance) GetRay(Vector3 hitPoint);
-        public abstract float EmitsLightInto(Vector3 lightDir);
+        public abstract bool EmitsLightInto(Vector3 lightDir);
         public abstract IEnumerable<(Vector3 direction, float distance)> GetSamples(Vector3 hitPoint, int maxSamples);
 
         public Vector3 Color { get; }

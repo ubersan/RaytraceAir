@@ -25,9 +25,9 @@ namespace RaytraceAir
             return (Vector3.Normalize(dir), dir.Length());
         }
 
-        public override float EmitsLightInto(Vector3 lightDir)
+        public override bool EmitsLightInto(Vector3 lightDir)
         {
-            return 1f;
+            return true;
         }
 
         public override IEnumerable<(Vector3 direction, float distance)> GetSamples(Vector3 hitPoint, int maxSamples)

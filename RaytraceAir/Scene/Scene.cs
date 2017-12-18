@@ -71,24 +71,26 @@ namespace RaytraceAir
                     {
                         // TODO: Works only for 1 light
                         var lightSamples = light.GetSamples(hitPoint, MaxLightSamples).ToList();
-                        foreach (var ray in lightSamples)
+                        foreach ((var lightDir, var lightDist) in lightSamples)
                         {
-                            (var lightDir, var lightDist) = ray;
                             var isIlluminated = TraceShadow(originShadowRay, lightDir, lightDist);
-                            isIlluminated *= light.EmitsLightInto(lightDir);
+                            isIlluminated &= light.EmitsLightInto(lightDir);
 
                             var contribution = Vector3.Dot(lightDir, hitSceneObject.Normal(hitPoint));
                             contribution *= 4000 * hitSceneObject.Albedo / (float) Math.PI;
                             contribution /= light.GetFalloff(lightDist);
 
-                            color += isIlluminated * hitSceneObject.Color * light.Color * Math.Max(0, contribution);
+                            if (isIlluminated)
+                            {
+                                color += hitSceneObject.Color * light.Color * Math.Max(0, contribution);
+                            }
 
-                            if (isIlluminated > 0 && hitSceneObject.Material == Material.Mirror)
+                            if (isIlluminated && hitSceneObject.Material == Material.Mirror)
                             {
                                 var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
                                 color += 0.8f * CastRay(originShadowRay, reflectionDir, depth + 1);
                             }
-                            else if (isIlluminated > 0 && hitSceneObject.Material == Material.Transparent)
+                            else if (isIlluminated && hitSceneObject.Material == Material.Transparent)
                             {
                                 var hitNormal = hitSceneObject.Normal(hitPoint);
                                 var kr = Fresnel(dir, hitNormal, 1.5f);
@@ -199,7 +201,7 @@ namespace RaytraceAir
             return hitSceneObject != null;
         }
 
-        private float TraceShadow(Vector3 origin, Vector3 dir, float distToLight)
+        private bool TraceShadow(Vector3 origin, Vector3 dir, float distToLight)
         {
             // TODO: I still could collide with a light, which is not emitting light into the object's direction
             foreach (var sceneObject in SceneObjectsWithoutLights)
@@ -211,11 +213,11 @@ namespace RaytraceAir
                         continue;
                     }
 
-                    return 0f;
+                    return false;
                 }
             }
 
-            return 1f;
+            return true;
         }
     }
 }
