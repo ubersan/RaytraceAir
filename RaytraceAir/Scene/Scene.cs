@@ -83,12 +83,12 @@ namespace RaytraceAir
 
                             color += HitObjectColorContribution(hitSceneObject, hitPoint, light, lightDir, lightDist);
 
-                            if (isIlluminated && hitSceneObject.Material == Material.Mirror)
+                            if (hitSceneObject.Material == Material.Mirror)
                             {
                                 var reflectionDir = Vector3.Normalize(GetReflectionDir(dir, hitSceneObject.Normal(hitPoint)));
                                 color += 0.8f * CastRay(originShadowRay, reflectionDir, depth + 1);
                             }
-                            else if (isIlluminated && hitSceneObject.Material == Material.Transparent)
+                            else if (hitSceneObject.Material == Material.Transparent)
                             {
                                 var hitNormal = hitSceneObject.Normal(hitPoint);
                                 var kr = Fresnel(dir, hitNormal, 1.5f);
