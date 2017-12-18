@@ -40,12 +40,6 @@ namespace RaytraceAir
             return 4f * (float)Math.PI * distance * distance;
         }
 
-        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
-        {
-            // sampling an infinitely large plane won't converge
-            throw new NotImplementedException();
-        }
-
         public override bool EmitsLightInto(Vector3 lightDir)
         {
             return !(Vector3.Dot(_normal, -lightDir) < 0);

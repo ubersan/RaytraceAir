@@ -19,12 +19,6 @@ namespace RaytraceAir
             return 4f * (float)Math.PI * distance * distance;
         }
 
-        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
-        {
-            var dir = _position - hitPoint;
-            return (Vector3.Normalize(dir), dir.Length());
-        }
-
         public override bool EmitsLightInto(Vector3 lightDir)
         {
             return true;
@@ -32,7 +26,8 @@ namespace RaytraceAir
 
         public override IEnumerable<(Vector3 direction, float distance)> GetSamples(Vector3 hitPoint, int maxSamples)
         {
-            yield return GetRay(hitPoint);
+            var dir = _position - hitPoint;
+            yield return (Vector3.Normalize(dir), dir.Length());
         }
 
         public override bool Intersects(Vector3 origin, Vector3 direction, out float t)

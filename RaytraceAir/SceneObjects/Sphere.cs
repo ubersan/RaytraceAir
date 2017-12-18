@@ -95,11 +95,6 @@ namespace RaytraceAir
             return 4f * (float)Math.PI * distance * distance;
         }
 
-        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool EmitsLightInto(Vector3 lightDir)
         {
             throw new NotImplementedException();

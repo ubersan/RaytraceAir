@@ -38,9 +38,9 @@ namespace RaytraceAir
             return false;
         }
 
-        public override (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
+        private (Vector3 direction, float distance) GetRay(Vector3 hitPoint)
         {
-            // sample random point in rectangle
+            // sample random point in rectangle 
             var widthSample = ((float)_random.NextDouble() - 0.5f) * _halfWidth;
             var heightSample = ((float)_random.NextDouble() - 0.5f) * _halfHeight;
 
