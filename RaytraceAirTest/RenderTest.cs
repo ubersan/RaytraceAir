@@ -81,6 +81,14 @@ namespace RaytraceAirTest
             Then_RenderedImageMatchesReferenceWithZeroTolerance();
         }
 
+        [TestMethod]
+        public void TransparentSphere_Render_ResultsMatchReferences()
+        {
+            Given_Scene(TestScenes.TransparentSphere);
+            When_RenderAndExportScene();
+            Then_RenderedImageMatchesReferenceWithZeroTolerance();
+        }
+
         #endregion
 
         #region Given, When, Then Methods
