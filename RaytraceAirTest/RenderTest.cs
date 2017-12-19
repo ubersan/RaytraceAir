@@ -141,8 +141,11 @@ namespace RaytraceAirTest
 
             GenerateDifferenceImage(perPixelAbsoluteDifferences);
 
-            var sumOfDifferences = perPixelAbsoluteDifferences
-                .Sum();
+            var differingPixelChannels = perPixelAbsoluteDifferences
+                .Select((d, i) => (d, i))
+                .Where(el => el.Item1 != 0);
+
+            var sumOfDifferences = differingPixelChannels.Select(el => el.Item1).Sum();
 
             var averageError = sumOfDifferences / (double)actualBytes.Length;
             Assert.IsTrue(averageError <= maxAverageError, $"averageError = {averageError}, maxAverageError = {maxAverageError}");

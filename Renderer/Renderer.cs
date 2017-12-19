@@ -49,7 +49,7 @@ namespace Renderer
 
         private static void RenderScene()
         {
-            RenderSingleFrame(TestScenes.TransparentSphere(), AppEnvironment.OutputFolder, "render");
+            RenderSingleFrame(TestScenes.ThreeColoredLightsOnPlane(), AppEnvironment.OutputFolder, "render");
             //RenderAnimationFrames(numSteps: 3);
         }
 
@@ -98,13 +98,13 @@ namespace Renderer
                     camera,
                     new List<SceneObject>
                     {
-                        new Sphere(new Vector3(-4, 0, -10), 0.75f, new Vector3(1, 0, 0), Material.Diffuse),
-                        new Sphere(new Vector3(-2, 0, -10), 0.75f, new Vector3(1, 1, 0), Material.Diffuse),
-                        new Sphere(new Vector3(-0, 0, -10), 0.75f, new Vector3(0, 1, 0), Material.Diffuse),
-                        new Sphere(new Vector3(2, 0, -10), 0.75f, new Vector3(0, 1, 1), Material.Diffuse),
-                        new Sphere(new Vector3(4, 0, -10), 0.75f, new Vector3(0, 0, 1), Material.Diffuse),
-                        new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1), Material.Diffuse),
-                        new Point(start + i * step, new Vector3(1, 1, 1), Material.Light),
+                        new Sphere(new Vector3(-4, 0, -10), 0.75f, new Vector3(1, 0, 0), new DiffuseMaterial()),
+                        new Sphere(new Vector3(-2, 0, -10), 0.75f, new Vector3(1, 1, 0), new DiffuseMaterial()),
+                        new Sphere(new Vector3(-0, 0, -10), 0.75f, new Vector3(0, 1, 0), new DiffuseMaterial()),
+                        new Sphere(new Vector3(2, 0, -10), 0.75f, new Vector3(0, 1, 1), new DiffuseMaterial()),
+                        new Sphere(new Vector3(4, 0, -10), 0.75f, new Vector3(0, 0, 1), new DiffuseMaterial()),
+                        new Plane(new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 1), new DiffuseMaterial()),
+                        new Point(start + i * step, new Vector3(1, 1, 1), new LightMaterial()),
                     },
                     new ProgressMonitor(camera.NumberOfPixels),
                     "render");

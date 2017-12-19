@@ -13,7 +13,7 @@ namespace RaytraceAir
         private readonly Vector3 _heightAxis;
         private readonly Random _random;
 
-        public Rectangle(Vector3 center, float width, float height, Vector3 normal, Vector3 widthAxis, Vector3 color, Material material)
+        public Rectangle(Vector3 center, float width, float height, Vector3 normal, Vector3 widthAxis, Vector3 color, params MaterialTracer[] material)
             : base(center, normal, color, material)
         {
             _center = center;

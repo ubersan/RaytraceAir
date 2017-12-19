@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace RaytraceAir
 {
     public abstract class SceneObject
     {
-        protected SceneObject(Vector3 color, Material material)
+        protected SceneObject(Vector3 color, params MaterialTracer[] materials)
         {
             Color = color;
-            Material = material;
+            Materials = materials;
         }
 
         public abstract bool Intersects(Vector3 origin, Vector3 direction, out float t);
@@ -20,8 +21,12 @@ namespace RaytraceAir
         public abstract IEnumerable<(Vector3 direction, float distance)> GetSamples(Vector3 hitPoint, int maxSamples);
 
         public Vector3 Color { get; }
-        public Material Material { get; }
+        public MaterialTracer[] Materials { get; }
 
-        public float Albedo = 0.18f;
+        // TODO: Refactor.
+        public bool IsLight => Materials.SingleOrDefault(material => material.MaterialType == MaterialType.Light) != null;
+        public bool IsTransparent => Materials.SingleOrDefault(material => material.MaterialType == MaterialType.Transparent) != null;
+
+        public const float Albedo = 0.18f;
     }
 }

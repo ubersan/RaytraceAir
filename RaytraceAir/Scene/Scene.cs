@@ -28,7 +28,7 @@ namespace RaytraceAir
 
             foreach (var pixel in Rasterizer.GetPixels(Camera))
             {
-                if (pixel.I == 960 && pixel.J == 540)
+                if (pixel.I == 243 && pixel.J == 168)
                 {
                     var i = 313;
                 }

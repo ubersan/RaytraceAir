@@ -1,6 +1,6 @@
 ﻿namespace RaytraceAir
 {
-    public enum Material
+    public enum MaterialType
     {
         Diffuse,
         Mirror,

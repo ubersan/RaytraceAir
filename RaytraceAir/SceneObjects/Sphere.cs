@@ -9,7 +9,7 @@ namespace RaytraceAir
         private readonly Vector3 _center;
         private readonly float _radius;
 
-        public Sphere(Vector3 center, float radius, Vector3 color, Material material)
+        public Sphere(Vector3 center, float radius, Vector3 color, params MaterialTracer[] material)
             : base(color, material)
         {
             _center = center;

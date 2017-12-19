@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -64,12 +66,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RayTracer\DiffuseMaterial.cs" />
+    <Compile Include="RayTracer\LightMaterial.cs" />
+    <Compile Include="RayTracer\MirrorMaterial.cs" />
     <Compile Include="RayTracer\RayTracer.cs" />
+    <Compile Include="RayTracer\MaterialTracer.cs" />
+    <Compile Include="RayTracer\TransparentMaterial.cs" />
     <Compile Include="Scene\Rasterizer.cs" />
     <Compile Include="Utils\AppEnvironment.cs" />
     <Compile Include="Utils\BitmapExporter.cs" />
     <Compile Include="Scene\Camera.cs" />
-    <Compile Include="SceneObjects\Material.cs" />
+    <Compile Include="RayTracer\MaterialType.cs" />
     <Compile Include="SceneObjects\Plane.cs" />
     <Compile Include="SceneObjects\Point.cs" />
     <Compile Include="Utils\ProgressMonitor.cs" />

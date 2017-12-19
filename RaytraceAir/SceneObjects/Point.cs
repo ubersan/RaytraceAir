@@ -8,7 +8,7 @@ namespace RaytraceAir
     {
         private readonly Vector3 _position;
 
-        public Point(Vector3 position, Vector3 color, Material material)
+        public Point(Vector3 position, Vector3 color, params MaterialTracer[] material)
             : base(color, material)
         {
             _position = position;
