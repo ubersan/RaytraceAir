@@ -28,14 +28,14 @@ namespace RaytraceAir
 
             foreach (var pixel in Rasterizer.GetPixels(Camera))
             {
-                if (pixel.I == 243 && pixel.J == 168)
+                if (pixel.Column == 315 && pixel.Row == 750)
                 {
                     var i = 313;
                 }
                 var originPrimaryRay = Camera.Position;
                 var dir = Vector3.Normalize(Camera.ViewDirection + pixel.X * Camera.RightDirection + pixel.Y * Camera.UpDirection);
 
-                Camera.Pixels[pixel.I, pixel.J] = RayTracer.CastRay(originPrimaryRay, dir, depth: 0);
+                Camera.Pixels[pixel.Column, pixel.Row] = RayTracer.CastRay(originPrimaryRay, dir, depth: 0);
 
                 ProgressMonitor.Advance();
             }
