@@ -157,6 +157,7 @@ namespace RaytraceAirTest
 
             var diffCam = _scene.Camera;
             diffCam.Pixels = new Vector3[diffCam.WidthInPixel, diffCam.HeightInPixel];
+            // TODO: Dont manually loop, somewhere 1 method knows how to and should be called everywhere else where now loops are used.
             for (var j = 0; j < diffCam.HeightInPixel; ++j)
             {
                 for (var i = 0; i < diffCam.WidthInPixel; ++i)
