@@ -1,5 +1,7 @@
 ﻿using System.Numerics;
 
+// TODO: General Remark: Testconfiguration mit default architecture auf x64 -> 6 Tests failen.
+
 namespace RaytraceAir
 {
     public class Camera
