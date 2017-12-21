@@ -11,6 +11,8 @@ namespace RaytraceAir
             ViewDirection = viewDirection;
             RightDirection = Vector3.Normalize(Vector3.Cross(ViewDirection, UpDirection));
             HorizontalFoV = horizontalFoV;
+
+            // TODO: Remove Pixels and width/height from camera
             WidthInPixel = widthInPixel;
             HeightInPixel = heightInPixel;
 
